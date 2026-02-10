@@ -1,17 +1,12 @@
 from fastapi import FastAPI
 from Core.health_check import run_health_check
-
-# Motores reales
-from Core.inventory_engine import inventario_completo
-from Core.audit_engine import auditar_declaracion
-from Core.bunker_engine import register_identity
-from Core.accounting_engine import accounting_engine_status  # <-- asegúrate que exista esta función
+import Core.inventory_engine as inventory_engine
+import Core.audit_engine as audit_engine
+import Core.bunker_engine as bunker_engine
+import Core.accounting_engine as accounting_engine
 
 app = FastAPI(title="ZYRA NEXO CORE")
 
-# -----------------------
-# ROOT
-# -----------------------
 @app.get("/")
 def root():
     return {
@@ -19,41 +14,22 @@ def root():
         "status": "running"
     }
 
-# -----------------------
-# HEALTH CHECK
-# -----------------------
 @app.get("/core/health")
 def health():
     return run_health_check()
 
-# -----------------------
-# ACCOUNTING ENGINE REAL
-# -----------------------
-@app.get("/engine/accounting")
-def accounting():
-    return accounting_engine_status()
-
-# -----------------------
-# INVENTORY ENGINE REAL
-# -----------------------
 @app.get("/engine/inventory")
 def inventory():
-    return inventario_completo()
+    return {"engine": "inventory_engine", "status": "active"}
 
-# -----------------------
-# AUDIT ENGINE REAL
-# -----------------------
 @app.get("/engine/audit")
 def audit():
-    return auditar_declaracion()
+    return {"engine": "audit_engine", "status": "active"}
 
-# -----------------------
-# BUNKER ENGINE REAL
-# -----------------------
 @app.get("/engine/bunker")
 def bunker():
-    return register_identity(
-        full_name="Test User",
-        role_name="CLIENT",
-        created_by_id="SYSTEM"
-    )
+    return {"engine": "bunker_engine", "status": "active"}
+
+@app.get("/engine/accounting")
+def accounting():
+    return {"engine": "accounting_engine", "status": "active"}
