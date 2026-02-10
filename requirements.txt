@@ -1,20 +1,25 @@
+# Núcleo de Alto Rendimiento
 fastapi==0.110.0
-uvicorn==0.29.0
+uvicorn[standard]==0.29.0
 
+# Validación de Datos (Estable)
 pydantic==2.6.4
 pydantic-settings==2.2.1
 
+# Cliente HTTP y Conectividad
 requests==2.31.0
 httpx==0.27.0
 
+# Base de Datos y Caché
 sqlalchemy==2.0.28
-
 redis==5.0.3
 
+# Automatización de Tareas (Nervios de Zyra)
 apscheduler==3.10.4
 
+# Utilidades y Logs
 loguru==0.7.2
-
 python-dotenv==1.0.1
 python-multipart==0.0.9
 typing-extensions==4.10.0
+
