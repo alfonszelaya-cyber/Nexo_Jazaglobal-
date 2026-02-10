@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from core.health_check import run_health_check
+from Core.health_check import run_health_check
 
 # Importamos motores reales
-from core.inventory_engine import inventario_completo
-from core.audit_engine import auditar_declaracion
-from core.bunker_engine import register_identity
+from Core.inventory_engine import inventario_completo
+from Core.audit_engine import auditar_declaracion
+from Core.bunker_engine import register_identity
 
 app = FastAPI(title="ZYRA NEXO CORE")
 
@@ -40,11 +40,11 @@ def audit():
     return auditar_declaracion()
 
 # -----------------------
-# BUNKER ENGINE REAL
+# BUNKER ENGINE
 # -----------------------
 @app.get("/engine/bunker")
 def bunker():
     return {
-        "message": "Bunker engine activo",
-        "hint": "Use POST para crear identidades"
+        "engine": "bunker_engine",
+        "status": "active"
     }
