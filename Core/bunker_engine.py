@@ -11,8 +11,7 @@ from datetime import datetime
 
 # Conexión al Cerebro Central (Ledger)
 try:
-    from zyra_ledger_hook import ledger_record
-except ImportError:
+    from .zyra_ledger_hook import ledger_record
     def ledger_record(*args, **kwargs): print(f"[MOCK SECURITY] {kwargs}")
 
 # -----------------------------
