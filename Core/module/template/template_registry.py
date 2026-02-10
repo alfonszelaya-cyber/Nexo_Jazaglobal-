@@ -1,0 +1,88 @@
+# ============================================================
+# ZYRA / NEXO
+# TEMPLATE REGISTRY CANÓNICO (RUNNER UNIVERSAL DE PLANTILLAS)
+# 10+ AÑOS – CORE SAFE – INMUTABLE
+# ============================================================
+
+"""
+Este archivo:
+- NO ejecuta lógica de negocio
+- NO imprime
+- NO guarda datos
+- SOLO registra y expone plantillas oficiales
+- Es el punto único para que el CORE cargue plantillas
+"""
+
+# =========================
+# IMPORTAR TODAS LAS PLANTILLAS
+# =========================
+
+from sales_flow_template import SALES_FLOW_TEMPLATE
+from sales_payment_flow_template import SALES_PAYMENT_FLOW_TEMPLATE
+from import_export_flow_template import IMPORT_EXPORT_FLOW_TEMPLATE
+from payment_flow_template import PAYMENT_FLOW_TEMPLATE
+from payroll_payment_flow_template import PAYROLL_PAYMENT_FLOW_TEMPLATE
+from business_flow_template import BUSINESS_FLOW_TEMPLATE
+from financial_report_template import FINANCIAL_REPORT_TEMPLATE
+from sales_finances_report_template import SALES_FINANCE_REPORT_TEMPLATE
+from fiscal_document_template import FISCAL_DOCUMENT_TEMPLATE
+from fiscal_country_template import FISCAL_COUNTRY_TEMPLATE
+from global_currency_conversion_template import GLOBAL_CURRENCY_CONVERSION_TEMPLATE
+
+# =========================
+# REGISTRO MAESTRO
+# =========================
+
+TEMPLATE_REGISTRY = {
+
+    # --- FLOWS ---
+    "SALES_FLOW": SALES_FLOW_TEMPLATE,
+    "SALES_PAYMENT_FLOW": SALES_PAYMENT_FLOW_TEMPLATE,
+    "IMPORT_EXPORT_FLOW": IMPORT_EXPORT_FLOW_TEMPLATE,
+    "PAYMENT_FLOW": PAYMENT_FLOW_TEMPLATE,
+    "PAYROLL_FLOW": PAYROLL_PAYMENT_FLOW_TEMPLATE,
+    "BUSINESS_FLOW": BUSINESS_FLOW_TEMPLATE,
+
+    # --- DOCUMENTOS ---
+    "FISCAL_DOCUMENT": FISCAL_DOCUMENT_TEMPLATE,
+    "FISCAL_COUNTRY": FISCAL_COUNTRY_TEMPLATE,
+
+    # --- REPORTES ---
+    "FINANCIAL_REPORT": FINANCIAL_REPORT_TEMPLATE,
+    "SALES_FINANCE_REPORT": SALES_FINANCE_REPORT_TEMPLATE,
+
+    # --- MONEDA ---
+    "CURRENCY_CONVERSION": GLOBAL_CURRENCY_CONVERSION_TEMPLATE,
+}
+
+# =========================
+# API CANÓNICA
+# =========================
+
+def get_template(template_name: str) -> dict:
+    """
+    Devuelve una plantilla por nombre.
+    """
+    name = template_name.strip().upper()
+    if name not in TEMPLATE_REGISTRY:
+        raise ValueError(f"Plantilla no registrada: {name}")
+    return TEMPLATE_REGISTRY[name]
+
+
+def list_templates() -> list:
+    """
+    Lista todas las plantillas disponibles.
+    """
+    return sorted(TEMPLATE_REGISTRY.keys())
+
+
+def template_exists(template_name: str) -> bool:
+    return template_name.strip().upper() in TEMPLATE_REGISTRY
+
+# ============================================================
+# REGLAS
+# - Este archivo NO debe modificarse sin orden explícita
+# - Las plantillas viven en /template
+# - El CORE consume SOLO este registry
+# - Preparado para 10+ años
+# ============================================================
