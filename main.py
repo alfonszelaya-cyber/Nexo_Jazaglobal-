@@ -1,42 +1,17 @@
-# ============================================================
-# ZYRA / NEXO — API PRINCIPAL (Render Ready)
-# ============================================================
-
-import sys
-import os
 from fastapi import FastAPI
+from core.health_check import run_health_check
 
-# ------------------------------------------------------------
-# CONFIGURACIÓN DE RUTAS (inyectar Core al path)
-# ------------------------------------------------------------
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CORE_PATH = os.path.join(BASE_DIR, "Core")
-
-if CORE_PATH not in sys.path:
-    sys.path.append(CORE_PATH)
-
-# ------------------------------------------------------------
-# IMPORTACIÓN SEGURA DEL CORE
-# ------------------------------------------------------------
-
-try:
-    from Core.health_check import run_health_check
-    CORE_AVAILABLE = True
-except Exception as e:
-    CORE_AVAILABLE = False
-    CORE_ERROR = str(e)
-
-# ------------------------------------------------------------
-# FASTAPI
-# ------------------------------------------------------------
+# Importaciones reales del CORE
+from core.accounting_engine import *
+from core.audit_engine import *
+from core.inventory_engine import *
+from core.bunker_engine import *
 
 app = FastAPI(title="ZYRA NEXO CORE")
 
-# ------------------------------------------------------------
+# =============================
 # ROOT
-# ------------------------------------------------------------
-
+# =============================
 @app.get("/")
 def root():
     return {
@@ -44,26 +19,49 @@ def root():
         "status": "running"
     }
 
-# ------------------------------------------------------------
-# STATUS SIMPLE
-# ------------------------------------------------------------
+# =============================
+# HEALTH REAL
+# =============================
+@app.get("/core/health")
+def health():
+    return run_health_check()
 
-@app.get("/status")
-def status():
+# =============================
+# ACCOUNTING ENGINE
+# =============================
+@app.get("/engine/accounting")
+def accounting_status():
     return {
-        "core": "conectado" if CORE_AVAILABLE else "no disponible",
-        "detalle": "Core cargado correctamente" if CORE_AVAILABLE else CORE_ERROR
+        "engine": "accounting_engine",
+        "status": "connected"
     }
 
-# ------------------------------------------------------------
-# HEALTH REAL DEL CORE
-# ------------------------------------------------------------
-
-@app.get("/core/health")
-def core_health():
-    if CORE_AVAILABLE:
-        return run_health_check()
+# =============================
+# AUDIT ENGINE
+# =============================
+@app.get("/engine/audit")
+def audit_status():
     return {
-        "error": "Core no disponible",
-        "detalle": CORE_ERROR
+        "engine": "audit_engine",
+        "status": "connected"
+    }
+
+# =============================
+# INVENTORY ENGINE
+# =============================
+@app.get("/engine/inventory")
+def inventory_status():
+    return {
+        "engine": "inventory_engine",
+        "status": "connected"
+    }
+
+# =============================
+# BUNKER ENGINE
+# =============================
+@app.get("/engine/bunker")
+def bunker_status():
+    return {
+        "engine": "bunker_engine",
+        "status": "connected"
     }
