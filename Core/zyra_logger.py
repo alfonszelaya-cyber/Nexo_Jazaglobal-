@@ -1,6 +1,6 @@
 # ==============================================
 # zyra_logger.py
-# Módulo de logging central del CORE ZYRA/NEXO
+# Módulo de logging central del Core ZYRA/NEXO
 # ==============================================
 
 import os
