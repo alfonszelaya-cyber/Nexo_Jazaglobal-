@@ -8,9 +8,9 @@ from datetime import datetime
 import json
 import os
 
-from zyra_bus import emit
-from zyra_ledger_hook import ledger_record
-from zyra_logs_hook import log
+from .zyra_bus import emit
+from .zyra_ledger_hook import ledger_record
+from .zyra_logs_hook import log
 
 # -------------------------
 # RUTAS BASE
