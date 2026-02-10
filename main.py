@@ -1,11 +1,46 @@
 from fastapi import FastAPI
-from Core.health_check import run_health_check
-import Core.inventory_engine as inventory_engine
-import Core.audit_engine as audit_engine
-import Core.bunker_engine as bunker_engine
-import Core.accounting_engine as accounting_engine
+import os
+import sys
+import importlib
+
+# ==============================
+# CONFIGURACIÓN BASE
+# ==============================
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CORE_DIR = os.path.join(BASE_DIR, "Core")
+
+sys.path.insert(0, BASE_DIR)
 
 app = FastAPI(title="ZYRA NEXO CORE")
+
+# ==============================
+# LOADER DINÁMICO TOTAL DEL CORE
+# ==============================
+
+def load_core_modules():
+    loaded = []
+    errors = []
+
+    for root, dirs, files in os.walk(CORE_DIR):
+        for file in files:
+            if file.endswith(".py") and not file.startswith("__"):
+                full_path = os.path.join(root, file)
+                rel_path = os.path.relpath(full_path, BASE_DIR)
+                module_name = rel_path.replace(os.sep, ".").replace(".py", "")
+
+                try:
+                    importlib.import_module(module_name)
+                    loaded.append(module_name)
+                except Exception as e:
+                    errors.append({module_name: str(e)})
+
+    return {"loaded": loaded, "errors": errors}
+
+
+# ==============================
+# ROOT
+# ==============================
 
 @app.get("/")
 def root():
@@ -14,22 +49,10 @@ def root():
         "status": "running"
     }
 
-@app.get("/core/health")
-def health():
-    return run_health_check()
+# ==============================
+# BOOT ENDPOINT
+# ==============================
 
-@app.get("/engine/inventory")
-def inventory():
-    return {"engine": "inventory_engine", "status": "active"}
-
-@app.get("/engine/audit")
-def audit():
-    return {"engine": "audit_engine", "status": "active"}
-
-@app.get("/engine/bunker")
-def bunker():
-    return {"engine": "bunker_engine", "status": "active"}
-
-@app.get("/engine/accounting")
-def accounting():
-    return {"engine": "accounting_engine", "status": "active"}
+@app.get("/core/boot")
+def boot_core():
+    return load_core_modules()
