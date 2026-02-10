@@ -5,7 +5,7 @@
 # ============================================================
 
 import datetime
-from core.system_constants import SensitiveAction, ROLE_ROOT, ROLE_SYSTEM
+from Core.system_constants import SensitiveAction, ROLE_ROOT, ROLE_SYSTEM
 
 # Base extensible (NO hardcode frágil)
 _COUNTRY_CONTEXT = {
