@@ -1,6 +1,6 @@
 # ============================================================
 # ledger.py
-# NEXO / ZYRA — LEDGER CORE (CANÓNICO)
+# NEXO / ZYRA — LEDGER Core (CANÓNICO)
 # Núcleo contable + fiscal + auditoría
 # Inmutable | Audit-ready | Long-term
 # ============================================================
@@ -14,7 +14,7 @@ from datetime import datetime
 # ===============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
-LEDGER_FILE = os.path.join(DATA_DIR, "ledger_core.json")
+LEDGER_FILE = os.path.join(DATA_DIR, "ledger_Core.json")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
@@ -141,7 +141,7 @@ def ledger_auditoria(mensaje, evidencia=None):
 # PRUEBA LOCAL
 # ===============================
 if __name__ == "__main__":
-    print("--- INICIANDO LEDGER CORE ---")
+    print("--- INICIANDO LEDGER Core ---")
 
     ledger_record(
         evento="TEST_INIT",
