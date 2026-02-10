@@ -4,7 +4,7 @@
 # SEGURIDAD SUPREMA · 3 CAPAS · CONSOLA PYTHON
 # =====================================================
 
-from core.zyra_bus import emit
+from Core.zyra_bus import emit
 
 # -------------------------
 # UTILIDADES
