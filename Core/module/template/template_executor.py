@@ -8,8 +8,8 @@
 import copy
 from datetime import datetime, timezone
 
-from template_registry import get_template
-from event_router import route_event
+from Core.module.template.template_registry import get_template
+from infrastructure.events.event_router import route_event
 
 # =========================
 # UTILIDADES
