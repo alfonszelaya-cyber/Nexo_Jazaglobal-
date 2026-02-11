@@ -9,7 +9,7 @@ import importlib
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# AGREGADO: Esto permite que el sistema encuentre tus módulos y carpetas
+# ÚNICO AGREGADO: Esto hace que Python vea tus carpetas y no dé error de "No module named"
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
@@ -26,7 +26,7 @@ EXCLUDED_FOLDERS = {
     ".git",
     ".idea",
     ".pytest_cache",
-    "data"
+    "data"  # evita que intente cargar json como módulos
 }
 
 EXCLUDED_FILES = {
@@ -43,6 +43,7 @@ def load_system_modules():
 
     for root, dirs, files in os.walk(BASE_DIR):
 
+        # excluir carpetas no válidas
         dirs[:] = [d for d in dirs if d not in EXCLUDED_FOLDERS]
 
         for file in files:
@@ -58,13 +59,14 @@ def load_system_modules():
 
             full_path = os.path.join(root, file)
 
+            # Construir nombre de módulo absoluto correcto
             rel_path = os.path.relpath(full_path, BASE_DIR)
             module_name = rel_path.replace(os.sep, ".").replace(".py", "")
 
             try:
                 module = importlib.import_module(module_name)
                 
-                # AGREGADO: Conecta automáticamente tus rutas al sistema
+                # ÚNICO AGREGADO: Conecta tus rutas automáticamente para que funcionen
                 if hasattr(module, "router"):
                     app.include_router(module.router)
                 
