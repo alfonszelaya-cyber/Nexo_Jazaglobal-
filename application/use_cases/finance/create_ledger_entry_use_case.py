@@ -1,18 +1,18 @@
-from domain.finance.ledger import Ledger
-from infrastructure.events.zyra_bus import ZyraBus
-from infrastructure.logging.zyra_logger import ZyraLogger
+# ============================================================
+# CREATE LEDGER ENTRY USE CASE
+# Conecta Application → Domain (ledger_record)
+# Arquitectura estable y coherente con tu dominio actual
+# ============================================================
+
+from domain.finance.ledger import ledger_record
 
 
 class CreateLedgerEntryUseCase:
 
-    def __init__(self, ledger: Ledger):
-        self.ledger = ledger
-
-    def execute(self, entry_data: dict):
-        entry = self.ledger.create_entry(entry_data)
-
-        ZyraLogger.info("Ledger entry created")
-
-        ZyraBus.emit("ledger_entry_created", entry)
-
-        return entry
+    def execute(self, evento: str, estado: str, payload: dict = None, origen: str = "SYSTEM"):
+        return ledger_record(
+            evento=evento,
+            estado=estado,
+            payload=payload,
+            origen=origen
+        )
