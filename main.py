@@ -8,25 +8,38 @@ import importlib
 # ==============================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CORE_DIR = os.path.join(BASE_DIR, "Core")
-
 sys.path.insert(0, BASE_DIR)
 
 app = FastAPI(title="ZYRA NEXO CORE")
 
 # ==============================
-# LOADER DINÁMICO TOTAL DEL CORE
+# LOADER DINÁMICO TOTAL DEL SISTEMA
 # ==============================
 
-def load_core_modules():
+EXCLUDED_FOLDERS = {
+    "__pycache__",
+    ".venv",
+    "venv",
+    ".git",
+    ".idea",
+    ".pytest_cache"
+}
+
+def load_system_modules():
     loaded = []
     errors = []
 
-    for root, dirs, files in os.walk(CORE_DIR):
+    for root, dirs, files in os.walk(BASE_DIR):
+
+        # excluir carpetas basura
+        dirs[:] = [d for d in dirs if d not in EXCLUDED_FOLDERS]
+
         for file in files:
             if file.endswith(".py") and not file.startswith("__"):
+
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, BASE_DIR)
+
                 module_name = rel_path.replace(os.sep, ".").replace(".py", "")
 
                 try:
@@ -35,8 +48,12 @@ def load_core_modules():
                 except Exception as e:
                     errors.append({module_name: str(e)})
 
-    return {"loaded": loaded, "errors": errors}
-
+    return {
+        "total_loaded": len(loaded),
+        "total_errors": len(errors),
+        "loaded": loaded,
+        "errors": errors
+    }
 
 # ==============================
 # ROOT
@@ -54,5 +71,5 @@ def root():
 # ==============================
 
 @app.get("/core/boot")
-def boot_core():
-    return load_core_modules()
+def boot_system():
+    return load_system_modules()
