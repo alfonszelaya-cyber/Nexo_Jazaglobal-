@@ -5,7 +5,7 @@
 # ============================================================
 
 import datetime
-from main.system_constants import SensitiveAction, ROLE_ROOT, ROLE_SYSTEM
+from domain.system.system_constants import SensitiveAction, ROLE_ROOT, ROLE_SYSTEM
 
 # Base extensible (NO hardcode frágil)
 _COUNTRY_CONTEXT = {
@@ -25,13 +25,11 @@ _ROLE_LEVELS = {
     "USER": 1
 }
 
-
 # -------------------------
 # FUNCIONES BASE
 # -------------------------
 def resolve_country(country_code: str):
     return _COUNTRY_CONTEXT.get(country_code, _COUNTRY_CONTEXT["GLOBAL"])
-
 
 def resolve_currency_flow(payer_currency: str, receiver_currency: str):
     return {
@@ -40,10 +38,8 @@ def resolve_currency_flow(payer_currency: str, receiver_currency: str):
         "to": receiver_currency
     }
 
-
 def resolve_access_level(role: str):
     return _ROLE_LEVELS.get(role, 1)
-
 
 def tur_snapshot(context: dict):
     return {
@@ -53,26 +49,20 @@ def tur_snapshot(context: dict):
         "resolved_at": datetime.datetime.utcnow().isoformat()
     }
 
-
 # -------------------------
 # CLASE PRINCIPAL (API)
 # -------------------------
 class ZYRA_TUR:
-    """
-    Trusted Universal Resolver
-    Motor de decisión de acceso y desbloqueo
-    """
 
     def __init__(self):
         self.engine_name = "ZYRA_TUR"
         self.version = "1.0.0"
 
     def authorize(self, role: str, action: SensitiveAction) -> bool:
-        # ROOT y SYSTEM pueden todo
+
         if role in (ROLE_ROOT, ROLE_SYSTEM):
             return True
 
-        # Acciones básicas
         if action == SensitiveAction.VIEW:
             return True
 
