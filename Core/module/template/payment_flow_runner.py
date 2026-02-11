@@ -7,8 +7,8 @@ from datetime import datetime, timezone
 # INYECTAR RUTA REAL DEL CORE
 # ============================================================
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODULE_DIR = os.path.dirname(CURRENT_DIR)   # core/module
-CORE_DIR = os.path.dirname(MODULE_DIR)      # core
+MODULE_DIR = os.path.dirname(CURRENT_DIR)   # Core/module
+CORE_DIR = os.path.dirname(MODULE_DIR)      # Core
 
 if CORE_DIR not in sys.path:
     sys.path.insert(0, CORE_DIR)
@@ -16,8 +16,8 @@ if CORE_DIR not in sys.path:
 # ============================================================
 # IMPORTS CANÓNICOS DEL SISTEMA
 # ============================================================
-from payment_flow_template import PAYMENT_FLOW_TEMPLATE
-from event_router import route_event
+from Core.module.template.payment_flow_template import PAYMENT_FLOW_TEMPLATE
+from infrastructure.events.event_router import route_event
 
 # ============================================================
 # FLUJO REAL DE PAGO (LISTO PARA PRODUCCIÓN)
