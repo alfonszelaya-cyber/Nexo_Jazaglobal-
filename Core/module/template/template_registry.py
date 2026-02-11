@@ -17,17 +17,17 @@ Este archivo:
 # IMPORTAR TODAS LAS PLANTILLAS
 # =========================
 
-from sales_flow_template import SALES_FLOW_TEMPLATE
-from sales_payment_flow_template import SALES_PAYMENT_FLOW_TEMPLATE
-from import_export_flow_template import IMPORT_EXPORT_FLOW_TEMPLATE
-from payment_flow_template import PAYMENT_FLOW_TEMPLATE
-from payroll_payment_flow_template import PAYROLL_PAYMENT_FLOW_TEMPLATE
-from business_flow_template import BUSINESS_FLOW_TEMPLATE
-from financial_report_template import FINANCIAL_REPORT_TEMPLATE
-from sales_finances_report_template import SALES_FINANCE_REPORT_TEMPLATE
-from fiscal_document_template import FISCAL_DOCUMENT_TEMPLATE
-from fiscal_country_template import FISCAL_COUNTRY_TEMPLATE
-from global_currency_conversion_template import GLOBAL_CURRENCY_CONVERSION_TEMPLATE
+from Core.module.template.sales_flow_template import SALES_FLOW_TEMPLATE
+from Core.module.template.sales_payment_flow_template import SALES_PAYMENT_FLOW_TEMPLATE
+from Core.module.template.import_export_flow_template import IMPORT_EXPORT_FLOW_TEMPLATE
+from Core.module.template.payment_flow_template import PAYMENT_FLOW_TEMPLATE
+from Core.module.template.payroll_payment_flow_template import PAYROLL_PAYMENT_FLOW_TEMPLATE
+from Core.module.template.business_flow_template import BUSINESS_FLOW_TEMPLATE
+from Core.module.template.financial_report_template import FINANCIAL_REPORT_TEMPLATE
+from Core.module.template.sales_finances_report_template import SALES_FINANCE_REPORT_TEMPLATE
+from Core.module.template.fiscal_document_template import FISCAL_DOCUMENT_TEMPLATE
+from Core.module.template.fiscal_country_template import FISCAL_COUNTRY_TEMPLATE
+from Core.module.template.global_currency_conversion_template import GLOBAL_CURRENCY_CONVERSION_TEMPLATE
 
 # =========================
 # REGISTRO MAESTRO
