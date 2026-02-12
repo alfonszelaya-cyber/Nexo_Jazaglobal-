@@ -7,8 +7,8 @@
 import os
 import json
 from datetime import datetime
-from accounting_engine import libro_por_empresa
-from zyra_ledger_hook import ledger_record
+from domain.finance.accounting_engine import libro_por_empresa
+from Core.core import ledger_record
 
 # -------------------------
 # RUTAS BASE
