@@ -4,7 +4,7 @@
 # CORE | PRE-BOOT | INMUTABLE | AUDITABLE | 10+ AÑOS
 # ============================================================
 
-from integrity_checker import run_boot_integrity, BOOT_OK, BOOT_SAFE, BOOT_HALT
+from domain.security.integrity_checker import run_boot_integrity, BOOT_OK, BOOT_SAFE, BOOT_HALT
 from datetime import datetime
 
 # ============================================================
