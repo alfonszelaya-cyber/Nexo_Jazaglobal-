@@ -9,9 +9,9 @@ import json
 import os
 from uuid import uuid4
 
-from infrastructure.zyra_bus import emit
+from infrastructure.events.zyra_bus import emit
 from Core.core_ledger import ledger_record
-from infrastructure.zyra_logs_hook import log
+from infrastructure.logging.zyra_logs_hook import log
 
 # -------------------------
 # PATHS
