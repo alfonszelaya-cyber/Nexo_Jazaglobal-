@@ -6,7 +6,7 @@
 
 import os
 from datetime import datetime, timedelta
-from zyra_bus import emit
+from infrastructure.events.zyra_bus import emit
 
 # =========================
 # CONFIGURACION GLOBAL
