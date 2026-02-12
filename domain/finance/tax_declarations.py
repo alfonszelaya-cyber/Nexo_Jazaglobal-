@@ -8,7 +8,7 @@ import os
 import json
 from datetime import datetime
 from domain.finance.accounting_engine import libro_por_empresa
-from Core.core import ledger_record
+from Core.core_ledger import ledger_record
 
 # -------------------------
 # RUTAS BASE
