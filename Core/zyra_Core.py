@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional
 # IMPORTS REALES SEGÚN TU ESTRUCTURA
 # ==============================
 
- from Core.core_ledger import ledger_record
+from Core.core_ledger import ledger_record
 from infrastructure.events.zyra_bus import emit
 from infrastructure.logging.zyra_logs_hook import log
 
