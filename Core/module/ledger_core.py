@@ -5,7 +5,7 @@
 
 import os
 import json
-from core.system_constants import LEDGER_FILE, DATA_DIR
+from domain.system.system_constants import LEDGER_FILE, DATA_DIR
 from core.zyra_logger import log
 
 os.makedirs(DATA_DIR, exist_ok=True)
