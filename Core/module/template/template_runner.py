@@ -22,7 +22,7 @@ if CORE_DIR not in sys.path:
 # ============================================================
 # IMPORTS DEL CORE
 # ============================================================
-from infrastructura.event_router import route_event
+from infrastructura.events.event_router import route_event
 
 # ============================================================
 # UTILIDADES
