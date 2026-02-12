@@ -17,7 +17,7 @@ from domain.security.safe_mode import (
     get_mode_snapshot
 )
 from domain.security.integrity_checker import run_boot_integrity, BOOT_OK, BOOT_SAFE, BOOT_HALT
-from domai.sytem.shutdown import record_shutdown
+from domain.sytem.shutdown import record_shutdown
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
