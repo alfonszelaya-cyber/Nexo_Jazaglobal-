@@ -9,7 +9,7 @@ import json
 import os
 
 from infrastructure.evenst.zyra_bus import emit
-from Core.core_ledger.import ledger_record
+from Core.core_ledger. import ledger_record
 from infrastructure.logging.zyra_logs_hook import log
 
 # -------------------------
