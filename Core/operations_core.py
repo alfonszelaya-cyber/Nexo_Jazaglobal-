@@ -9,8 +9,8 @@ import json
 import os
 from uuid import uuid4
 
-from infrastructuere.zyra_bus import emit
-from domain.zyra_ledger_hook import ledger_record
+from infrastructure.zyra_bus import emit
+from Core.core_ledger import ledger_record
 from infrastructure.zyra_logs_hook import log
 
 # -------------------------
