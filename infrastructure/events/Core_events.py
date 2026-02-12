@@ -6,7 +6,7 @@
 import os
 import json
 from datetime import datetime
-from zyra_logger import log
+from Core.core_ledger import ledger_record
 
 # -----------------------------
 # Configuración de eventos
