@@ -15,7 +15,7 @@ from zyra_exceptions import (
     DegradedModeActivated
 )
 
-from safe_mode import (
+from domain.sexurity.safe_mode import (
     activate_safe_mode,
     activate_degraded_mode,
     restore_normal_mode,
