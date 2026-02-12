@@ -8,7 +8,7 @@
 import json
 import os
 from datetime import datetime
-from infrastructure.evenst.zyra_bus import emit
+from infrastructure.events.zyra_bus import emit
 
 class ZyraCoreRadar:
     """
