@@ -8,9 +8,9 @@
 from datetime import datetime
 
 from inventory_engine import registrar_evento as inventario_evento
-from document_fiscal_engine import simular_documento, generar_documento
-from radar_engine import registrar_evento as radar_evento
-from zyra_ledger_hook import ledger_record
+from domain.finance.document_fiscal_engine import simular_documento, generar_documento
+from Core.radar_engine import registrar_evento as radar_evento
+from Core.core_leger import ledger_record
 
 # -------------------------
 # PROCESAR EVENTO POS
