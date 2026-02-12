@@ -20,7 +20,7 @@ def header():
 
 # ledger_record seguro (si existe en core)
 try:
-    from core.ledger import ledger_record
+    from infrastructure.ledger import ledger_record
 except:
     def ledger_record(msg):
         print(f"[LEDGER] {msg}")
