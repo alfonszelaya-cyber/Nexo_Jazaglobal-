@@ -11,7 +11,7 @@ from datetime import datetime
 
 # Importamos el motor contable para conectar Facturación -> Contabilidad
 try:
-    from accounting_engine import registrar_evento_contable
+    from domain.accounting_engine import registrar_evento_contable
 except ImportError:
     # Fallback por si se ejecuta aislado
     def registrar_evento_contable(*args, **kwargs):
