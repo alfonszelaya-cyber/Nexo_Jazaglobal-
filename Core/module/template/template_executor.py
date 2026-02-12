@@ -9,7 +9,7 @@ import copy
 from datetime import datetime, timezone
 
 from Core.module.template.template_registry import get_template
-from infrastructure.events.event_router import route_event
+from infrastructure.event_router import route_event
 
 # =========================
 # UTILIDADES
