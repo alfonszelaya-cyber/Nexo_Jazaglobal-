@@ -7,7 +7,7 @@
 import os
 import requests
 from datetime import datetime
-from zyra_ledger_hook import ledger_record
+from Core.core_ledger import ledger_record
 
 COINGECKO_URL = "https://api.coingecko.com/api/v3/simple/price"
 
