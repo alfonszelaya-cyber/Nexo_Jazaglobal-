@@ -17,7 +17,7 @@ if CORE_DIR not in sys.path:
 # IMPORTS CANÓNICOS DEL SISTEMA
 # ============================================================
 from Core.module.template.payment_flow_template import PAYMENT_FLOW_TEMPLATE
-from infrastructure.events.event_router import route_event
+from infrastructur.event.event_router import route_event
 
 # ============================================================
 # FLUJO REAL DE PAGO (LISTO PARA PRODUCCIÓN)
