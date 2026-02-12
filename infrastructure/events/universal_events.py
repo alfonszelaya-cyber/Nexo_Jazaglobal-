@@ -9,7 +9,6 @@ import os
 import json
 import re
 from datetime import datetime
-from 
 from Core.core_ledger import ledger_record
 # -----------------------------
 # Configuración de almacenamiento
