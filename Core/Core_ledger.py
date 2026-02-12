@@ -1,5 +1,5 @@
 # ============================================================
-# core_ledger.py
+# Core_ledger.py
 # NEXO / ZYRA — LEDGER CORE (CANÓNICO ENTERPRISE)
 # Núcleo contable + fiscal + auditoría
 # Inmutable | Audit-ready | Long-term | 10+ años
