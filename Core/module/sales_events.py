@@ -3,7 +3,7 @@
 # EVENTOS DE VENTAS
 # PASIVO | SOLO EMITE
 
-from emit_event import emit_event
+from infrastructure.events.emit_events import emit_events
 
 def emit_sales_event(event_name: str, payload: dict):
     emit_event("business", {
