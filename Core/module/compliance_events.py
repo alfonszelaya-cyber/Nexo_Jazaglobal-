@@ -5,7 +5,7 @@
 # PASIVO | SOLO EMITE
 # ============================================================
 
-from emit_event import emit_event
+from domain.events.emit_events import emit_event
 
 def emit_compliance_event(event_name: str, payload: dict):
     emit_event("business", {
