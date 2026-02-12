@@ -9,8 +9,8 @@ import os
 import json
 import re
 from datetime import datetime
-from zyra_ledger_hook import ledger_record
-
+from 
+from Core.core_ledger import ledger_record
 # -----------------------------
 # Configuración de almacenamiento
 # -----------------------------
