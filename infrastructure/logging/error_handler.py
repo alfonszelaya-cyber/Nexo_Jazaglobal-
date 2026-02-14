@@ -4,7 +4,7 @@
 # CORE | INMUTABLE | 10+ AÑOS
 # ============================================================
 
-from zyra_exceptions import (
+from Core.zyra_exceptions import (
     ZyraCoreError,
     CoreBootError,
     CoreIntegrityError,
