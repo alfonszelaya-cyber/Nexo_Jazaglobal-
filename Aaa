@@ -1,0 +1,38 @@
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+ROUTERS_DIR = os.path.join(BASE_DIR, "app", "routers")
+SCHEMAS_DIR = os.path.join(BASE_DIR, "app", "schemas")
+
+MODULES = [
+    "finance",
+    "security",
+    "auth",
+    "users",
+    "roles",
+    "audit",
+    "operations",
+    "inventory",
+    "logistics",
+    "billing",
+    "payments",
+    "reports",
+    "analytics",
+    "integrations",
+    "compliance",
+    "documents",
+    "contracts",
+    "notifications",
+    "system",
+    "ai",
+]
+
+def create_subfolders(base_path):
+    for module in MODULES:
+        os.makedirs(os.path.join(base_path, module), exist_ok=True)
+
+if __name__ == "__main__":
+    create_subfolders(ROUTERS_DIR)
+    create_subfolders(SCHEMAS_DIR)
+    print("✅ Subfolders created inside routers and schemas.")
