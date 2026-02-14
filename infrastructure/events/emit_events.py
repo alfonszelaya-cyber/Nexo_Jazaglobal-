@@ -27,7 +27,7 @@ FILES = {
 # EMISOR CANÓNICO
 # ==========================================================
 
-def emit_events(channel: str, event: dict):
+def emit_events(channel: str, events: dict):
     """
     Registra un evento por canal (core | business | module)
 
@@ -63,7 +63,7 @@ def emit_events(channel: str, event: dict):
         "id": str(uuid.uuid4()),
         "channel": channel,
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "event": event
+        "events": events
     }
 
     data.append(record)
