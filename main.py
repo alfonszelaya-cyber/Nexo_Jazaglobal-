@@ -1,18 +1,13 @@
 # ============================================================
 # ZYRA / NEXO
 # MAIN ENTRYPOINT — ENTERPRISE 3.0
-# Dynamic Loader + API Bootstrap + Security Layer
+# Clean Bootstrap | Production Ready | Scalable
 # ============================================================
 
 from fastapi import FastAPI
 import os
 import sys
 import importlib
-import secrets
-import string
-import uuid
-import hashlib
-from datetime import datetime, timedelta
 
 # ============================================================
 # CONFIGURACIÓN BASE
@@ -30,15 +25,11 @@ app = FastAPI(
 )
 
 # ============================================================
-# AUTO REGISTER ROUTERS
+# INCLUIR ROUTER PRINCIPAL
 # ============================================================
 
-try:
-    from app.router import router as api_router
-    app.include_router(api_router)
-except Exception:
-    pass
-
+from app.router import router as api_router
+app.include_router(api_router)
 
 # ============================================================
 # LOADER DINÁMICO TOTAL
@@ -80,7 +71,6 @@ def load_system_modules():
         "errors": errors
     }
 
-
 # ============================================================
 # ROOT
 # ============================================================
@@ -93,19 +83,6 @@ def root():
         "status": "running"
     }
 
-
-# ============================================================
-# HEALTH
-# ============================================================
-
-@app.get("/health")
-def health_check():
-    return {
-        "status": "OK",
-        "timestamp": datetime.utcnow()
-    }
-
-
 # ============================================================
 # BOOT
 # ============================================================
@@ -113,80 +90,3 @@ def health_check():
 @app.get("/core/boot")
 def boot_system():
     return load_system_modules()
-
-
-# ============================================================
-# SECURITY TOOLS — ENTERPRISE
-# ============================================================
-
-# 🔐 Generar contraseña segura
-@app.get("/security/generate-password")
-def generate_password(length: int = 16):
-
-    alphabet = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(secrets.choice(alphabet) for _ in range(length))
-
-    return {
-        "generated_password": password,
-        "length": length
-    }
-
-
-# 🎟 Generar token seguro
-@app.get("/security/generate-token")
-def generate_token(length: int = 32):
-
-    token = secrets.token_hex(length)
-
-    return {
-        "secure_token": token,
-        "expires_in_minutes": 60
-    }
-
-
-# 🔢 Generar número seguro
-@app.get("/security/generate-number")
-def generate_secure_number(digits: int = 8):
-
-    number = ''.join(secrets.choice(string.digits) for _ in range(digits))
-
-    return {
-        "secure_number": number
-    }
-
-
-# 🆔 Generar UUID
-@app.get("/security/generate-uuid")
-def generate_uuid():
-
-    return {
-        "uuid": str(uuid.uuid4())
-    }
-
-
-# 🔒 Hash SHA256
-@app.post("/security/hash")
-def hash_data(payload: dict):
-
-    if "data" not in payload:
-        return {"error": "data field required"}
-
-    hashed = hashlib.sha256(payload["data"].encode()).hexdigest()
-
-    return {
-        "original": payload["data"],
-        "sha256": hashed
-    }
-
-
-# ============================================================
-# FUTURE ZONE
-# ============================================================
-
-@app.get("/core/info")
-def system_info():
-    return {
-        "architecture": "Clean Architecture",
-        "environment": os.getenv("ENVIRONMENT", "production"),
-        "modules_path": BASE_DIR
-    }
