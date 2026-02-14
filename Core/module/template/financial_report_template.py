@@ -3,7 +3,7 @@
 # financial report template — ENTERPRISE 3.0
 # ============================================================
 
-financial_report_template = {
+{
     "report_metadata": {
         "report_id": "auto_uuid",
         "report_type": "GENERAL_FINANCIAL",
