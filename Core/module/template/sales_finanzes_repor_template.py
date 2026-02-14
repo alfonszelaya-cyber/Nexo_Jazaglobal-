@@ -1,65 +1,97 @@
 # ============================================================
 # ZYRA / NEXO
-# PLANTILLA CANÓNICA DE REPORTE FINANCIERO / VENTAS
-# 10 AÑOS – MULTI PAÍS – MULTI MONEDA
+# SALES FINANCE REPORT TEMPLATE — ENTERPRISE 3.0
+# Revenue Intelligence | Tax Structured | Global Safe
 # ============================================================
 
-SALES_FINANCE_REPORT_TEMPLATE = {
+SALES_FINANCE_REPORT_TEMPLATE_V3 = {
 
     "report_metadata": {
-        "report_id": "auto",
-        "report_type": "SALES_FINANCE",   # SALES_FINANCE | TAX | CUSTOM
-        "version": "1.0",
+        "report_id": "auto_uuid",
+        "report_type": "SALES_FINANCE",
+        "schema_version": "3.0",
+        "generated_by": "ZYRA_ENGINE",
+        "generated_at": "auto_utc",
         "country": "auto",
-        "created_by": "ZYRA",
-        "created_at": "auto",
-        "period": {
-            "start_date": "auto",
-            "end_date": "auto"
-        },
-        "status": "DRAFT"                # DRAFT | FINAL | ARCHIVED
+        "base_currency": "USD",
+        "presentation_currency": "client_choice",
+        "status": "DRAFT",  # DRAFT | FINAL | ARCHIVED
+        "integrity_hash": "auto_hash"
     },
 
-    "company_info": {
-        "name": "",
+    "company_profile": {
+        "company_id": "auto",
+        "legal_name": "",
         "tax_id": "",
-        "address": "",
-        "currency": "USD"
+        "industry_sector": "",
+        "operational_region": "",
+        "compliance_profile": "STRICT"
     },
 
-    "sales_summary": [
+    "reporting_period": {
+        "start_date": "auto",
+        "end_date": "auto",
+        "fiscal_year": "auto"
+    },
+
+    "sales_metrics": {
+        "total_transactions": 0,
+        "units_sold_total": 0,
+        "gross_revenue": 0.0,
+        "discounts_total": 0.0,
+        "returns_total": 0.0,
+        "net_revenue": 0.0,
+        "currency": "base_currency"
+    },
+
+    "sales_breakdown": [
         {
             "product_id": "",
+            "sku": "",
             "description": "",
+            "category": "",
             "units_sold": 0,
             "unit_price": 0.0,
-            "total_sales": 0.0,
-            "currency": "USD"
+            "gross_sales": 0.0,
+            "tax_amount": 0.0,
+            "discount_applied": 0.0,
+            "net_sales": 0.0,
+            "currency": "BASE",
+            "linked_invoice_ids": [],
+            "risk_flag": False
         }
     ],
 
-    "financial_summary": {
-        "revenue_total": 0.0,
-        "tax_total": 0.0,
-        "discounts_total": 0.0,
-        "net_total": 0.0,
-        "currency": "USD"
+    "tax_structure": {
+        "tax_model": "MULTI_LAYER",
+        "total_tax_collected": 0.0,
+        "tax_breakdown": [
+            {
+                "tax_type": "VAT",
+                "rate": 0.0,
+                "amount": 0.0
+            }
+        ]
     },
 
-    "zyra_supervision": {
-        "check_compliance": True,
-        "auto_flag_errors": True,
-        "memory_level": "LONG_TERM",
-        "audit_trail_enabled": True
+    "intelligence_layer": {
+        "top_selling_products": [],
+        "regional_performance": [],
+        "customer_segment_analysis": [],
+        "revenue_growth_rate": 0.0,
+        "risk_score": 0.0
+    },
+
+    "compliance_controls": {
+        "cross_check_with_ledger": True,
+        "cross_check_with_tax_module": True,
+        "audit_ready": True,
+        "immutable": True
     },
 
     "audit_trail": {
         "linked_documents": [],
-        "hash": "auto",
-        "immutable": True
+        "event_trace_ids": [],
+        "digital_signature": "auto_signature"
     }
 }
-
-# ============================================================
-# FIN DE PLANTILLA
-# ============================================================
