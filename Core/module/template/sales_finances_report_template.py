@@ -1,11 +1,9 @@
 # ============================================================
 # ZYRA / NEXO
 # SALES FINANCE REPORT TEMPLATE — ENTERPRISE 3.0
-# Revenue Intelligence | Tax Structured | Global Safe
 # ============================================================
 
 SALES_FINANCE_REPORT_TEMPLATE = {
-
     "report_metadata": {
         "report_id": "auto_uuid",
         "report_type": "SALES_FINANCE",
@@ -15,10 +13,9 @@ SALES_FINANCE_REPORT_TEMPLATE = {
         "country": "auto",
         "base_currency": "USD",
         "presentation_currency": "client_choice",
-        "status": "DRAFT",  # DRAFT | FINAL | ARCHIVED
+        "status": "DRAFT",
         "integrity_hash": "auto_hash"
     },
-
     "company_profile": {
         "company_id": "auto",
         "legal_name": "",
@@ -27,13 +24,11 @@ SALES_FINANCE_REPORT_TEMPLATE = {
         "operational_region": "",
         "compliance_profile": "STRICT"
     },
-
     "reporting_period": {
         "start_date": "auto",
         "end_date": "auto",
         "fiscal_year": "auto"
     },
-
     "sales_metrics": {
         "total_transactions": 0,
         "units_sold_total": 0,
@@ -43,7 +38,6 @@ SALES_FINANCE_REPORT_TEMPLATE = {
         "net_revenue": 0.0,
         "currency": "base_currency"
     },
-
     "sales_breakdown": [
         {
             "product_id": "",
@@ -61,7 +55,6 @@ SALES_FINANCE_REPORT_TEMPLATE = {
             "risk_flag": False
         }
     ],
-
     "tax_structure": {
         "tax_model": "MULTI_LAYER",
         "total_tax_collected": 0.0,
@@ -73,7 +66,6 @@ SALES_FINANCE_REPORT_TEMPLATE = {
             }
         ]
     },
-
     "intelligence_layer": {
         "top_selling_products": [],
         "regional_performance": [],
@@ -81,14 +73,12 @@ SALES_FINANCE_REPORT_TEMPLATE = {
         "revenue_growth_rate": 0.0,
         "risk_score": 0.0
     },
-
     "compliance_controls": {
         "cross_check_with_ledger": True,
         "cross_check_with_tax_module": True,
         "audit_ready": True,
         "immutable": True
     },
-
     "audit_trail": {
         "linked_documents": [],
         "event_trace_ids": [],
