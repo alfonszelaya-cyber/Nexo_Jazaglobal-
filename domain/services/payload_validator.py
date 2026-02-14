@@ -44,7 +44,7 @@ def validate_payload(payload: dict, required=None, schema=None):
 # NO ejecuta acciones
 # ============================================================
 
-from zyra_exceptions import ValidationError
+from Core.zyra_exceptions import ValidationError
 
 
 def validate_payload(payload, schema):
