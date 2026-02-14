@@ -1,14 +1,13 @@
 # ==========================================================
-# event_bus.py
-# NEXO / ZYRA — CANONICAL EVENT BUS
-# Arquitectura Enterprise | Escalable 10+ años | Inmutable
+# emit_events.py
+# NEXO / ZYRA — CANONICAL EVENT EMITTER
+# Diseño enterprise | Escalable | Núcleo único
 # ==========================================================
 
 import json
 import os
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, Any
 
 # ==========================================================
 # CONFIGURACIÓN BASE
@@ -18,71 +17,60 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-CHANNEL_FILES = {
+FILES = {
     "core": "events_core.json",
     "business": "events_business.json",
     "module": "events_modules.json"
 }
 
 # ==========================================================
-# UTILIDADES INTERNAS
-# ==========================================================
-
-def _now_utc() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-def _safe_load(path: str):
-    if not os.path.exists(path):
-        return []
-
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data if isinstance(data, list) else []
-    except Exception:
-        return []
-
-def _safe_save(path: str, data):
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-    except Exception:
-        # Failsafe: nunca tumbar el sistema por error de disco
-        pass
-
-# ==========================================================
 # EMISOR CANÓNICO
 # ==========================================================
 
-def emit_event(channel: str, event: Dict[str, Any]) -> Dict[str, Any]:
+def emit_events(channel: str, event: dict):
     """
-    Emite un evento estructurado y lo persiste por canal.
+    Registra un evento por canal (core | business | module)
 
-    Reglas:
-    - No ejecuta lógica de negocio
-    - No imprime logs
+    - No ejecuta lógica
+    - No imprime
     - No depende de otros módulos
     - No rompe el sistema si falla persistencia
-    - Preparado para migración futura a broker real (Redis, Kafka, etc.)
     """
 
-    if not isinstance(channel, str) or channel not in CHANNEL_FILES:
+    if channel not in FILES:
         raise ValueError(f"Canal inválido: {channel}")
 
     if not isinstance(event, dict):
         raise TypeError("El evento debe ser un diccionario")
 
-    path = os.path.join(DATA_DIR, CHANNEL_FILES[channel])
-    data = _safe_load(path)
+    path = os.path.join(DATA_DIR, FILES[channel])
 
+    # Carga segura
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            data = []
+    else:
+        data = []
+
+    if not isinstance(data, list):
+        data = []
+
+    # Normalización del evento
     record = {
         "id": str(uuid.uuid4()),
         "channel": channel,
-        "timestamp": _now_utc(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "event": event
     }
 
     data.append(record)
-    _safe_save(path, data)
 
-    return record
+    # Persistencia segura
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
