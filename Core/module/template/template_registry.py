@@ -1,7 +1,7 @@
 # ============================================================
 # ZYRA / NEXO
 # TEMPLATE REGISTRY CANÓNICO (RUNNER UNIVERSAL DE PLANTILLAS)
-# 10+ AÑOS – CORE SAFE – INMUTABLE
+# ENTERPRISE 3.0 – CORE SAFE – INMUTABLE
 # ============================================================
 
 """
@@ -23,7 +23,10 @@ from Core.module.template.import_export_flow_template import IMPORT_EXPORT_FLOW_
 from Core.module.template.payment_flow_template import PAYMENT_FLOW_TEMPLATE
 from Core.module.template.payroll_payment_flow_template import PAYROLL_PAYMENT_FLOW_TEMPLATE
 from Core.module.template.business_flow_template import BUSINESS_FLOW_TEMPLATE
-from Core.module.template.financial_report_template import FINANCIAL_REPORT_TEMPLATE
+
+# 👇 ESTA ES LA LÍNEA CORREGIDA (minúscula correcta)
+from Core.module.template.financial_report_template import financial_report_template
+
 from Core.module.template.sales_finances_report_template import SALES_FINANCE_REPORT_TEMPLATE
 from Core.module.template.fiscal_document_template import FISCAL_DOCUMENT_TEMPLATE
 from Core.module.template.fiscal_country_template import FISCAL_COUNTRY_TEMPLATE
@@ -48,7 +51,7 @@ TEMPLATE_REGISTRY = {
     "FISCAL_COUNTRY": FISCAL_COUNTRY_TEMPLATE,
 
     # --- REPORTES ---
-    "FINANCIAL_REPORT": FINANCIAL_REPORT_TEMPLATE,
+    "FINANCIAL_REPORT": financial_report_template,
     "SALES_FINANCE_REPORT": SALES_FINANCE_REPORT_TEMPLATE,
 
     # --- MONEDA ---
@@ -60,9 +63,6 @@ TEMPLATE_REGISTRY = {
 # =========================
 
 def get_template(template_name: str) -> dict:
-    """
-    Devuelve una plantilla por nombre.
-    """
     name = template_name.strip().upper()
     if name not in TEMPLATE_REGISTRY:
         raise ValueError(f"Plantilla no registrada: {name}")
@@ -70,19 +70,8 @@ def get_template(template_name: str) -> dict:
 
 
 def list_templates() -> list:
-    """
-    Lista todas las plantillas disponibles.
-    """
     return sorted(TEMPLATE_REGISTRY.keys())
 
 
 def template_exists(template_name: str) -> bool:
     return template_name.strip().upper() in TEMPLATE_REGISTRY
-
-# ============================================================
-# REGLAS
-# - Este archivo NO debe modificarse sin orden explícita
-# - Las plantillas viven en /template
-# - El CORE consume SOLO este registry
-# - Preparado para 10+ años
-# ============================================================
