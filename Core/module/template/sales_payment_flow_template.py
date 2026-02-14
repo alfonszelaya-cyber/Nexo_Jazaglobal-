@@ -1,87 +1,82 @@
 # ============================================================
 # ZYRA / NEXO
-# PLANTILLA CANÓNICA DE FLUJO DE VENTA / COBRO
-# 10 AÑOS – MULTI PAÍS – MULTI MONEDA – GLOBAL SAFE
+# SALES PAYMENT FLOW TEMPLATE
+# VERSION 2.0 – ENTERPRISE GLOBAL READY
 # ============================================================
 
 SALES_PAYMENT_FLOW_TEMPLATE = {
-    "flow_metadata": {
-        "flow_id": "auto",
-        "version": "1.0",
+    "meta": {
+        "flow_id": "auto_uuid",
+        "version": "2.0",
+        "environment": "PRODUCTION",  # DEV | STAGING | PRODUCTION
+        "region": "auto",
         "country": "auto",
-        "currency": "client_choice",
-        "status": "DRAFT",  # DRAFT | ACTIVE | COMPLETED | CANCELLED
-        "created_at": "auto",
-        "updated_at": "auto"
+        "base_currency": "USD",
+        "client_currency": "auto",
+        "created_at_utc": "auto",
+        "updated_at_utc": "auto",
+        "created_by": "system_or_user_id"
     },
 
-    "parties": {
+    "actors": {
         "seller": {
-            "name": "",
+            "entity_id": "",
+            "legal_name": "",
             "tax_id": "",
+            "country": "",
             "address": "",
-            "contact": ""
+            "contact_email": ""
         },
         "buyer": {
-            "name": "",
+            "entity_id": "",
+            "legal_name": "",
             "tax_id": "",
-            "address": "",
-            "contact": "",
-            "preferred_currency": "client_choice"
-        },
-        "payment_processor": {
-            "name": "",
-            "contact": "",
-            "transaction_id": ""
+            "country": "",
+            "client_type": "NATURAL",  # NATURAL | LEGAL
+            "risk_profile": "LOW",     # LOW | MEDIUM | HIGH
+            "preferred_currency": ""
         }
     },
 
-    "products_services": [
-        {
-            "sku": "",
-            "description": "",
-            "quantity": 0,
-            "unit_price": 0.0,
-            "currency": "BASE",
-            "total_value": 0.0,
-            "tax": 0.0,
-            "discount": 0.0
-        }
-    ],
-
-    "flow_steps": [
-        "ORDER_PLACEMENT",
-        "INVOICE_ISSUANCE",
-        "PAYMENT_COLLECTION",
-        "DELIVERY_CONFIRMATION",
-        "AFTER_SALES_SERVICE"
-    ],
-
-    "compliance": {
-        "zyra_pre_validate": True,
-        "country_tax_rules": True,
-        "audit_trail_enabled": True,
-        "memory_level": "LONG_TERM",
-        "predict_risks": True
+    "order": {
+        "order_id": "",
+        "order_status": "DRAFT",  # DRAFT | CONFIRMED | CANCELLED
+        "items": [],
+        "notes": "",
+        "source_channel": "WEB"  # WEB | POS | API | MOBILE
     },
 
-    "financials": {
+    "payment": {
+        "payment_id": "",
+        "method": "TRANSFER",  # CASH | CARD | TRANSFER | CRYPTO
+        "processor": "",
+        "transaction_reference": "",
+        "payment_status": "PENDING",  # PENDING | PARTIAL | PAID | FAILED
+        "paid_amount": 0.0,
+        "due_date": "auto",
+        "installments": []
+    },
+
+    "financial_summary": {
         "subtotal": 0.0,
         "tax_total": 0.0,
         "discount_total": 0.0,
         "grand_total": 0.0,
-        "currency": "client_choice",
-        "exchange_rate_reference": "zyra_rate",
-        "payment_status": "PENDING"  # PENDING | PARTIAL | PAID
+        "exchange_rate": 1.0,
+        "currency": "USD"
     },
 
-    "audit_trail": {
-        "linked_documents": [],
-        "hash": "auto",
-        "immutable": True
+    "compliance": {
+        "tax_validated": False,
+        "fraud_checked": False,
+        "kyc_verified": False,
+        "country_rules_applied": True,
+        "audit_enabled": True
+    },
+
+    "audit": {
+        "event_log": [],
+        "immutable_hash": "auto_hash",
+        "archived": False
     }
 }
-
-# ============================================================
-# FIN DE PLANTILLA DE FLUJO DE VENTA / COBRO GLOBAL
-# ============================================================
