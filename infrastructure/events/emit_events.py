@@ -1,7 +1,7 @@
 # ==========================================================
-# zyra_event_bus.py
+# event_bus.py
 # NEXO / ZYRA — CANONICAL EVENT BUS
-# Diseño enterprise | Escalable 10+ años | Inmutable
+# Arquitectura Enterprise | Escalable 10+ años | Inmutable
 # ==========================================================
 
 import json
@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-FILES = {
+CHANNEL_FILES = {
     "core": "events_core.json",
     "business": "events_business.json",
     "module": "events_modules.json"
@@ -47,7 +47,7 @@ def _safe_save(path: str, data):
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
     except Exception:
-        # Failsafe: nunca tumbar el CORE por un error de disco
+        # Failsafe: nunca tumbar el sistema por error de disco
         pass
 
 # ==========================================================
@@ -58,21 +58,21 @@ def emit_event(channel: str, event: Dict[str, Any]) -> Dict[str, Any]:
     """
     Emite un evento estructurado y lo persiste por canal.
 
-    - No ejecuta lógica
-    - No imprime
+    Reglas:
+    - No ejecuta lógica de negocio
+    - No imprime logs
     - No depende de otros módulos
     - No rompe el sistema si falla persistencia
-    - Preparado para migración futura a broker real
+    - Preparado para migración futura a broker real (Redis, Kafka, etc.)
     """
 
-    if not isinstance(channel, str) or channel not in FILES:
+    if not isinstance(channel, str) or channel not in CHANNEL_FILES:
         raise ValueError(f"Canal inválido: {channel}")
 
     if not isinstance(event, dict):
         raise TypeError("El evento debe ser un diccionario")
 
-    path = os.path.join(DATA_DIR, FILES[channel])
-
+    path = os.path.join(DATA_DIR, CHANNEL_FILES[channel])
     data = _safe_load(path)
 
     record = {
