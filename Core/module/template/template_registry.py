@@ -6,6 +6,7 @@
 
 """
 Este archivo:
+
 - NO ejecuta lógica de negocio
 - NO imprime
 - NO guarda datos
@@ -24,13 +25,14 @@ from Core.module.template.payment_flow_template import PAYMENT_FLOW_TEMPLATE
 from Core.module.template.payroll_payment_flow_template import PAYROLL_PAYMENT_FLOW_TEMPLATE
 from Core.module.template.business_flow_template import BUSINESS_FLOW_TEMPLATE
 
-# 👇 ESTA ES LA LÍNEA CORREGIDA (minúscula correcta)
+# ⚠️ ESTA ES LA ÚNICA VARIABLE EN MINÚSCULA
 from Core.module.template.financial_report_template import financial_report_template
 
 from Core.module.template.sales_finances_report_template import SALES_FINANCE_REPORT_TEMPLATE
 from Core.module.template.fiscal_document_template import FISCAL_DOCUMENT_TEMPLATE
 from Core.module.template.fiscal_country_template import FISCAL_COUNTRY_TEMPLATE
 from Core.module.template.global_currency_conversion_template import GLOBAL_CURRENCY_CONVERSION_TEMPLATE
+
 
 # =========================
 # REGISTRO MAESTRO
@@ -57,6 +59,7 @@ TEMPLATE_REGISTRY = {
     # --- MONEDA ---
     "CURRENCY_CONVERSION": GLOBAL_CURRENCY_CONVERSION_TEMPLATE,
 }
+
 
 # =========================
 # API CANÓNICA
