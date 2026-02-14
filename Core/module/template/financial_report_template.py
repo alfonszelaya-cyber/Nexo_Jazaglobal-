@@ -4,7 +4,7 @@
 # Multi-Country | Multi-Currency | Audit-Grade | BI Ready
 # ============================================================
 
-FINANCIAL_REPORT_TEMPLATE_V3 = {
+ financial_report_template = {
 
     "report_metadata": {
         "report_id": "auto_uuid",
