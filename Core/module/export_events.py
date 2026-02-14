@@ -3,7 +3,7 @@
 # NEXO / ZYRA — EXPORT EVENTS
 # ============================================================
 
-from infrastructure.events.emit_events import emit_events
+from Core.module.emit_events import emit_events
 
 def export_event(event: str, payload: dict):
     emit_event("module", {
