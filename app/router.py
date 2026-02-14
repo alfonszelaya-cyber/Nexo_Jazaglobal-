@@ -11,7 +11,10 @@ from application.use_cases.finance.generate_sales_finance_report_use_case import
     GenerateSalesFinanceReportUseCase,
 )
 
-router = APIRouter(prefix="/api/v1", tags=["Finance"])
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["Finance"]
+)
 
 
 # ============================================================
@@ -33,9 +36,6 @@ def health_check() -> Dict[str, Any]:
 
 @router.post("/finance/sales-report")
 def generate_sales_report(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Generates a Sales Finance Report using official template registry.
-    """
 
     try:
         use_case = GenerateSalesFinanceReportUseCase()
