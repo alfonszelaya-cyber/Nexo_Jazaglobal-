@@ -1,128 +1,64 @@
 # ============================================================
 # ZYRA / NEXO
-# API ROUTER — ENTERPRISE 3.0 FULL
-# Finance + Security + Health
+# MASTER API ROUTER — ENTERPRISE 3.0
+# Central Router Registry
 # ============================================================
 
-from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
-import secrets
-import string
-import uuid
-import hashlib
-from datetime import datetime
-
-from application.use_cases.finance.generate_sales_finance_report_use_case import (
-    GenerateSalesFinanceReportUseCase,
-)
-
-router = APIRouter(
-    prefix="/api/v1",
-    tags=["Core"]
-)
+from fastapi import APIRouter
 
 # ============================================================
-# HEALTH
+# IMPORT ALL MODULE ROUTERS
+# (IMPORTANT: Using "Routers" with capital R)
 # ============================================================
 
-@router.get("/health")
-def health_check():
-    return {
-        "status": "OK",
-        "service": "NEXO_ZYRA_CORE",
-        "timestamp": datetime.utcnow()
-    }
+from app.Routers.ai.ai_router import router as ai_router
+from app.Routers.audit.audit_router import router as audit_router
+from app.Routers.auth.auth_router import router as auth_router
+from app.Routers.billing.billing_router import router as billing_router
+from app.Routers.compliance.compliance_router import router as compliance_router
+from app.Routers.contracts.contracts_router import router as contracts_router
+from app.Routers.documents.documents_router import router as documents_router
+from app.Routers.finance.finance_router import router as finance_router
+from app.Routers.integrations.integrations_router import router as integrations_router
+from app.Routers.inventory.inventory_router import router as inventory_router
+from app.Routers.logistics.logistics_router import router as logistics_router
+from app.Routers.notifications.notifications_router import router as notifications_router
+from app.Routers.operations.operations_router import router as operations_router
+from app.Routers.payments.payments_router import router as payments_router
+from app.Routers.reports.reports_router import router as reports_router
+from app.Routers.roles.roles_router import router as roles_router
+from app.Routers.security.security_router import router as security_router
+from app.Routers.system.system_router import router as system_router
+from app.Routers.users.users_router import router as users_router
 
 
 # ============================================================
-# FINANCE — SALES REPORT
+# MASTER ROUTER
 # ============================================================
 
-@router.post("/finance/sales-report")
-def generate_sales_report(payload: Dict[str, Any]):
-
-    try:
-        use_case = GenerateSalesFinanceReportUseCase()
-        result = use_case.execute(payload)
-
-        return {
-            "success": True,
-            "data": result
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+router = APIRouter(prefix="/api/v1")
 
 
 # ============================================================
-# SECURITY — GENERATE PASSWORD
+# REGISTER ALL MODULES
 # ============================================================
 
-@router.get("/security/generate-password")
-def generate_password(length: int = 16):
-
-    alphabet = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(secrets.choice(alphabet) for _ in range(length))
-
-    return {
-        "generated_password": password,
-        "length": length
-    }
-
-
-# ============================================================
-# SECURITY — GENERATE TOKEN
-# ============================================================
-
-@router.get("/security/generate-token")
-def generate_token(length: int = 32):
-
-    token = secrets.token_hex(length)
-
-    return {
-        "secure_token": token
-    }
-
-
-# ============================================================
-# SECURITY — GENERATE NUMBER
-# ============================================================
-
-@router.get("/security/generate-number")
-def generate_secure_number(digits: int = 8):
-
-    number = ''.join(secrets.choice(string.digits) for _ in range(digits))
-
-    return {
-        "secure_number": number
-    }
-
-
-# ============================================================
-# SECURITY — GENERATE UUID
-# ============================================================
-
-@router.get("/security/generate-uuid")
-def generate_uuid():
-
-    return {
-        "uuid": str(uuid.uuid4())
-    }
-
-
-# ============================================================
-# SECURITY — HASH SHA256
-# ============================================================
-
-@router.post("/security/hash")
-def hash_data(payload: Dict[str, Any]):
-
-    if "data" not in payload:
-        raise HTTPException(status_code=400, detail="data field required")
-
-    hashed = hashlib.sha256(payload["data"].encode()).hexdigest()
-
-    return {
-        "original": payload["data"],
-        "sha256": hashed
-}
+router.include_router(ai_router)
+router.include_router(audit_router)
+router.include_router(auth_router)
+router.include_router(billing_router)
+router.include_router(compliance_router)
+router.include_router(contracts_router)
+router.include_router(documents_router)
+router.include_router(finance_router)
+router.include_router(integrations_router)
+router.include_router(inventory_router)
+router.include_router(logistics_router)
+router.include_router(notifications_router)
+router.include_router(operations_router)
+router.include_router(payments_router)
+router.include_router(reports_router)
+router.include_router(roles_router)
+router.include_router(security_router)
+router.include_router(system_router)
+router.include_router(users_router)
