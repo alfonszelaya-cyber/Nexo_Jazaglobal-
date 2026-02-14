@@ -4,7 +4,7 @@
 # Revenue Intelligence | Tax Structured | Global Safe
 # ============================================================
 
-SALES_FINANCE_REPORT_TEMPLATE_V3 = {
+SALES_FINANCE_REPORT_TEMPLATE = {
 
     "report_metadata": {
         "report_id": "auto_uuid",
