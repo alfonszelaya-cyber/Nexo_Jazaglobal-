@@ -111,6 +111,12 @@ class SensitiveAction(str, Enum):
     DELETE = "delete"
     UNLOCK = "unlock"
 
+    # ============================================================
+# LEDGER CONFIGURATION
+# ============================================================
+
+LEDGER_FILE = "ledger.json"
+
 # ============================================================
 # NOTA
 # - Este archivo es CANÓNICO
