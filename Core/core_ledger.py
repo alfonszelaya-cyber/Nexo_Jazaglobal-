@@ -1,6 +1,6 @@
 # ============================================================
 # core_ledger.py
-# NEXO / ZYRA — LEDGER CORE (CANÓNICO ENTERPRISE)
+# NEXO / ZYRA — LEDGER CORE (CANÓNICO ENTERPRISE 3.0)
 # Núcleo contable + fiscal + auditoría
 # Inmutable | Audit-ready | Long-term | 10+ años
 # ============================================================
@@ -8,8 +8,27 @@
 import json
 import os
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
+
+# ===============================
+# LOGGER CANÓNICO 3.0
+# ===============================
+
+def log(level: str, message: str) -> None:
+    """
+    Logger interno del CORE.
+    - UTC ISO
+    - Seguro en producción
+    - No rompe ejecución
+    """
+
+    try:
+        timestamp = datetime.now(timezone.utc).isoformat()
+        print(f"[{timestamp}] [{level.upper()}] {message}")
+    except Exception:
+        pass
+
 
 # ===============================
 # CONFIGURACIÓN BASE
@@ -35,7 +54,7 @@ if not os.path.exists(LEDGER_FILE):
 # ===============================
 
 def _now() -> str:
-    return datetime.utcnow().isoformat()
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _load_ledger() -> List[Dict[str, Any]]:
@@ -45,13 +64,16 @@ def _load_ledger() -> List[Dict[str, Any]]:
             if isinstance(data, list):
                 return data
     except Exception:
-        pass
+        log("ERROR", "Error cargando ledger")
     return []
 
 
 def _save_ledger(data: List[Dict[str, Any]]) -> None:
-    with open(LEDGER_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    try:
+        with open(LEDGER_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception:
+        log("CRITICAL", "Error guardando ledger")
 
 
 # ===============================
@@ -64,10 +86,6 @@ def ledger_record(
     payload: Optional[Dict[str, Any]] = None,
     origen: str = "SYSTEM"
 ) -> Dict[str, Any]:
-    """
-    Registra un evento INMUTABLE en el ledger del sistema.
-    Diseñado para auditoría y trazabilidad histórica.
-    """
 
     registro = {
         "timestamp": _now(),
@@ -81,6 +99,8 @@ def ledger_record(
         data = _load_ledger()
         data.append(registro)
         _save_ledger(data)
+
+    log("INFO", f"Ledger record creado: {evento}")
 
     return registro
 
