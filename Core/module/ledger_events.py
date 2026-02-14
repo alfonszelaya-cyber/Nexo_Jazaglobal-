@@ -8,8 +8,8 @@
 from infrastructure.events.emit_events import emit_events
 
 def emit_ledger_event(event_name: str, payload: dict):
-    emit_event("business", {
+    emit_events("business", {
         "module": "LEDGER",
-        "event": event_name,
+        "events": events_name,
         "payload": payload
     })
