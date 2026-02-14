@@ -7,7 +7,7 @@
 
 from datetime import datetime
 
-from inventory_engine import registrar_evento as inventario_evento
+from Core.inventory_engine import registrar_evento as inventario_evento
 from domain.finance.document_fiscal_engine import simular_documento, generar_documento
 from Core.radar_engine import registrar_evento as radar_evento
 from Core.core_ledger import ledger_record
