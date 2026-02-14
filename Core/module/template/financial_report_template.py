@@ -1,6 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
-# FINANCIAL REPORT TEMPLATE — ENTERPRISE 3.0
+# financial report template — ENTERPRISE 3.0
 # ============================================================
 
 financial_report_template = {
