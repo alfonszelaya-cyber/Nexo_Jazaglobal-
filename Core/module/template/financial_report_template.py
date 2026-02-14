@@ -1,9 +1,9 @@
 # ============================================================
-# ZYRA / NEXO
-# financial report template — ENTERPRISE 3.0
+# zyra / nexo
+# financial report template — enterprise 3.0
 # ============================================================
 
-{
+financial_report_template = {
     "report_metadata": {
         "report_id": "auto_uuid",
         "report_type": "GENERAL_FINANCIAL",
