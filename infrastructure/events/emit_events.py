@@ -1,7 +1,7 @@
 # ==========================================================
 # emit_events.py
 # NEXO / ZYRA — CANONICAL EVENT EMITTER
-# Diseño enterprise | Escalable | Núcleo único
+# Núcleo único de eventos
 # ==========================================================
 
 import json
@@ -27,14 +27,9 @@ FILES = {
 # EMISOR CANÓNICO
 # ==========================================================
 
-def emit_events(channel: str, events: dict):
+def emit_events(channel: str, event: dict):
     """
-    Registra un evento por canal (core | business | module)
-
-    - No ejecuta lógica
-    - No imprime
-    - No depende de otros módulos
-    - No rompe el sistema si falla persistencia
+    Emisor único oficial del sistema.
     """
 
     if channel not in FILES:
@@ -58,17 +53,15 @@ def emit_events(channel: str, events: dict):
     if not isinstance(data, list):
         data = []
 
-    # Normalización del evento
     record = {
         "id": str(uuid.uuid4()),
         "channel": channel,
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "events": events
+        "event": event
     }
 
     data.append(record)
 
-    # Persistencia segura
     try:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
