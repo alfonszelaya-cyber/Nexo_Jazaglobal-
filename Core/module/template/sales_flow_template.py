@@ -1,87 +1,59 @@
 # ============================================================
 # ZYRA / NEXO
-# PLANTILLA CANÓNICA DE FLUJO DE VENTA / COMERCIALIZACIÓN
-# 10 AÑOS – MULTI PAÍS – MULTI MONEDA – GLOBAL SAFE
+# SALES FLOW TEMPLATE
+# VERSION 2.0 – COMMERCIAL INTELLIGENCE READY
 # ============================================================
 
 SALES_FLOW_TEMPLATE = {
-    "flow_metadata": {
-        "flow_id": "auto",
-        "version": "1.0",
+    "meta": {
+        "flow_id": "auto_uuid",
+        "version": "2.0",
+        "region": "auto",
         "country": "auto",
-        "currency": "client_choice",
-        "status": "DRAFT",           # DRAFT | IN_PROGRESS | COMPLETED | CANCELLED
-        "created_at": "auto",
-        "updated_at": "auto"
+        "created_at_utc": "auto",
+        "updated_at_utc": "auto"
     },
 
-    "seller": {
-        "name": "",
-        "tax_id": "",
-        "address": "",
-        "contact": ""
+    "client": {
+        "client_id": "",
+        "legal_name": "",
+        "client_type": "NATURAL",
+        "segment": "STANDARD",  # STANDARD | VIP | CORPORATE
+        "risk_score": 0
     },
 
-    "buyer": {
-        "name": "",
-        "tax_id": "",
-        "address": "",
-        "contact": "",
-        "client_type": "NATURAL",     # NATURAL | LEGAL
-        "preferred_currency": "client_choice"
+    "commercial_data": {
+        "quote_id": "",
+        "status": "DRAFT",  # DRAFT | SENT | NEGOTIATING | CLOSED
+        "valid_until": "auto",
+        "sales_channel": "DIRECT"
     },
 
-    "products": [
-        {
-            "sku": "",
-            "description": "",
-            "quantity": 1,
-            "unit_price": 0.0,
-            "currency": "BASE",
-            "taxable": True,
-            "discount": 0.0,
-            "total_price": 0.0
-        }
-    ],
-
-    "payment_terms": {
-        "method": "TRANSFER",          # CASH | CARD | TRANSFER | CRYPTO
-        "due_date": "auto",
-        "partial_payments_allowed": False,
-        "paid": False
-    },
+    "products": [],
 
     "logistics": {
-        "delivery_method": "LAND",     # LAND | AIR | SEA
-        "dispatch_date": "auto",
-        "arrival_date": "auto",
-        "tracking_id": "auto"
+        "delivery_type": "LAND",
+        "warehouse_origin": "",
+        "tracking_code": "",
+        "estimated_delivery": "auto"
     },
 
-    "compliance": {
-        "zyra_pre_validate": True,
-        "fiscal_rules_country": True,
-        "audit_trail_enabled": True,
-        "memory_level": "LONG_TERM",
-        "predict_risks": True
+    "financial_projection": {
+        "projected_revenue": 0.0,
+        "projected_margin": 0.0,
+        "cost_estimate": 0.0,
+        "currency": "USD"
     },
 
-    "financials": {
-        "subtotal": 0.0,
-        "tax_total": 0.0,
-        "discount_total": 0.0,
-        "grand_total": 0.0,
-        "currency": "client_choice",
-        "exchange_rate_reference": "zyra_rate"
+    "intelligence": {
+        "recommended_price": 0.0,
+        "risk_alert": False,
+        "upsell_opportunities": [],
+        "cross_sell_suggestions": []
     },
 
-    "audit_trail": {
-        "linked_documents": [],
-        "hash": "auto",
-        "immutable": True
+    "audit": {
+        "history": [],
+        "immutable_hash": "auto_hash"
     }
 }
-
-# ============================================================
-# FIN DE PLANTILLA DE FLUJO DE VENTA / COMERCIALIZACIÓN
-# ============================================================
