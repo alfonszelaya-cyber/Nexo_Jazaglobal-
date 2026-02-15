@@ -5,51 +5,55 @@
 # ============================================================
 
 from fastapi import APIRouter
-from typing import Dict, Any
 from datetime import datetime
-import os
-import platform
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.system_schema import (
+    SystemStatusResponse,
+    SystemInfoResponse,
+    SystemHealthResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.system_services import SystemService
+
 
 router = APIRouter(
     prefix="/system",
     tags=["System"]
 )
 
+system_service = SystemService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def system_status() -> Dict[str, Any]:
-    return {
-        "system": "ZYRA_NEXO_CORE",
-        "status": "running",
-        "version": "3.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=SystemStatusResponse)
+def system_status():
+    return system_service.get_status()
 
 
 # ============================================================
 # SYSTEM INFO
 # ============================================================
 
-@router.get("/info")
-def system_info() -> Dict[str, Any]:
-    return {
-        "environment": os.getenv("ENVIRONMENT", "production"),
-        "platform": platform.system(),
-        "platform_version": platform.version(),
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/info", response_model=SystemInfoResponse)
+def system_info():
+    return system_service.get_system_info()
 
 
 # ============================================================
 # HEALTH CHECK
 # ============================================================
 
-@router.get("/health")
-def system_health() -> Dict[str, Any]:
-    return {
-        "health": "OK",
-        "checked_at": datetime.utcnow()
-    }
+@router.get("/health", response_model=SystemHealthResponse)
+def system_health():
+    return system_service.get_health()
