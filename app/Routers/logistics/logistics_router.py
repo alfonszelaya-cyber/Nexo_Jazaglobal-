@@ -5,77 +5,76 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.logistics_schema import (
+    LogisticsStatusResponse,
+    ShipmentCreateRequest,
+    ShipmentCreateResponse,
+    ShipmentStatusUpdateRequest,
+    ShipmentStatusUpdateResponse,
+    ShipmentTrackRequest,
+    ShipmentTrackResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.logistics_services import LogisticsService
+
 
 router = APIRouter(
     prefix="/logistics",
     tags=["Logistics"]
 )
 
+logistics_service = LogisticsService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def logistics_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_LOGISTICS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=LogisticsStatusResponse)
+def logistics_status():
+    return LogisticsStatusResponse(
+        module="ZYRA_LOGISTICS_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # CREATE SHIPMENT
 # ============================================================
 
-@router.post("/create-shipment")
-def create_shipment(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/create-shipment", response_model=ShipmentCreateResponse)
+def create_shipment(payload: ShipmentCreateRequest):
     try:
-        return {
-            "shipment_id": str(uuid.uuid4()),
-            "shipment_data": payload,
-            "status": "created",
-            "created_at": datetime.utcnow()
-        }
-
+        return logistics_service.create_shipment(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "SHIPMENT_CREATION_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # UPDATE SHIPMENT STATUS
 # ============================================================
 
-@router.post("/update-status")
-def update_shipment_status(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "shipment_id": payload.get("shipment_id"),
-        "new_status": payload.get("status"),
-        "updated_at": datetime.utcnow()
-    }
+@router.post("/update-status", response_model=ShipmentStatusUpdateResponse)
+def update_shipment_status(payload: ShipmentStatusUpdateRequest):
+    return logistics_service.update_status(payload)
 
 
 # ============================================================
 # TRACK SHIPMENT
 # ============================================================
 
-@router.post("/track")
-def track_shipment(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "shipment_id": payload.get("shipment_id"),
-        "current_location": "IN_TRANSIT",
-        "last_update": datetime.utcnow()
-    }
+@router.post("/track", response_model=ShipmentTrackResponse)
+def track_shipment(payload: ShipmentTrackRequest):
+    return logistics_service.track_shipment(payload)
