@@ -5,72 +5,75 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
-import secrets
-import hashlib
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.security_schema import (
+    SecurityStatusResponse,
+    GenerateApiKeyResponse,
+    HashRequest,
+    HashResponse,
+    ValidateAccessRequest,
+    ValidateAccessResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.security_services import SecurityService
+
 
 router = APIRouter(
     prefix="/security",
     tags=["Security"]
 )
 
+security_service = SecurityService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def security_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_SECURITY_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=SecurityStatusResponse)
+def security_status():
+    return SecurityStatusResponse(
+        module="ZYRA_SECURITY_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # GENERATE API KEY
 # ============================================================
 
-@router.get("/generate-api-key")
+@router.get("/generate-api-key", response_model=GenerateApiKeyResponse)
 def generate_api_key():
-
-    return {
-        "api_key": secrets.token_hex(32),
-        "generated_at": datetime.utcnow()
-    }
+    return security_service.generate_api_key()
 
 
 # ============================================================
 # HASH DATA
 # ============================================================
 
-@router.post("/hash")
-def hash_data(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    if "data" not in payload:
-        raise HTTPException(status_code=400, detail="data field required")
-
-    hashed = hashlib.sha256(payload["data"].encode()).hexdigest()
-
-    return {
-        "original": payload["data"],
-        "sha256": hashed,
-        "generated_at": datetime.utcnow()
-    }
+@router.post("/hash", response_model=HashResponse)
+def hash_data(payload: HashRequest):
+    try:
+        return security_service.hash_data(payload)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # VALIDATE ACCESS
 # ============================================================
 
-@router.post("/validate-access")
-def validate_access(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "user_id": payload.get("user_id"),
-        "access_granted": True,
-        "validated_at": datetime.utcnow()
-    }
+@router.post("/validate-access", response_model=ValidateAccessResponse)
+def validate_access(payload: ValidateAccessRequest):
+    return security_service.validate_access(payload)
