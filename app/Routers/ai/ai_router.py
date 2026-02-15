@@ -1,84 +1,89 @@
 # ============================================================
 # ZYRA / NEXO
 # AI ROUTER — ENTERPRISE 3.0
-# Artificial Intelligence Services Layer
+# Conectado a Schemas + Services (Real Architecture)
 # ============================================================
 
-from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
-import uuid
+from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime
 
-router = APIRouter(prefix="/ai", tags=["AI"])
+# ===============================
+# IMPORT SCHEMAS
+# ===============================
+
+from app.Schemas.analytics.analytics_schema import (
+    AnalyticsStatusResponse,
+    MetricRequest,
+    MetricResponse
+)
+
+# ===============================
+# IMPORT SERVICES
+# ===============================
+
+from app.Services.analytics.analytics_services import AnalyticsService
+
+
+router = APIRouter(
+    prefix="/ai",
+    tags=["AI"]
+)
+
+# ===============================
+# DEPENDENCY INJECTION
+# ===============================
+
+def get_service():
+    return AnalyticsService()
 
 
 # ============================================================
 # AI STATUS
 # ============================================================
 
-@router.get("/status")
-def ai_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_AI_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=AnalyticsStatusResponse)
+def ai_status():
+    return AnalyticsStatusResponse(
+        module="ZYRA_AI_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
-# AI ANALYZE DATA
+# AI ANALYZE (REAL SERVICE CALL)
 # ============================================================
 
-@router.post("/analyze")
-def analyze_data(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Basic AI data analyzer placeholder.
-    """
-
+@router.post("/analyze", response_model=MetricResponse)
+def analyze_data(
+    payload: MetricRequest,
+    service: AnalyticsService = Depends(get_service)
+):
     try:
-        return {
-            "analysis_id": str(uuid.uuid4()),
-            "received_payload": payload,
-            "insight": "AI analysis executed successfully",
-            "confidence_score": 0.95,
-            "generated_at": datetime.utcnow()
-        }
+        return service.analyze_metric(payload)
 
     except Exception as e:
         raise HTTPException(
             status_code=400,
-            detail={
-                "error": "AI_ANALYSIS_FAILED",
-                "message": str(e)
-            }
+            detail=str(e)
         )
 
 
 # ============================================================
-# AI PREDICTION ENGINE
+# AI PREDICT (REAL SERVICE CALL)
 # ============================================================
 
-@router.post("/predict")
-def predict(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    AI prediction placeholder endpoint.
-    """
-
+@router.post("/predict", response_model=MetricResponse)
+def predict(
+    payload: MetricRequest,
+    service: AnalyticsService = Depends(get_service)
+):
     try:
-        return {
-            "prediction_id": str(uuid.uuid4()),
-            "input": payload,
-            "prediction": "future_growth_positive",
-            "probability": 0.87,
-            "generated_at": datetime.utcnow()
-        }
+        return service.predict_metric(payload)
 
     except Exception as e:
         raise HTTPException(
             status_code=400,
-            detail={
-                "error": "AI_PREDICTION_FAILED",
-                "message": str(e)
-            }
+            detail=str(e)
         )
