@@ -21,6 +21,9 @@ class AIServices:
     - Core modules
     """
 
+    # ========================================================
+    # STATUS
+    # ========================================================
     def get_status(self) -> Dict[str, Any]:
         emit("AI_STATUS_CHECK", source="AI_SERVICE")
 
@@ -31,6 +34,9 @@ class AIServices:
             "timestamp": datetime.utcnow()
         }
 
+    # ========================================================
+    # ANALYZE DATA
+    # ========================================================
     def analyze(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if not payload:
             raise ValueError("Payload cannot be empty")
@@ -60,6 +66,9 @@ class AIServices:
 
         return result
 
+    # ========================================================
+    # PREDICT
+    # ========================================================
     def predict(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if not payload:
             raise ValueError("Payload cannot be empty")
@@ -87,3 +96,4 @@ class AIServices:
         )
 
         return result
+
