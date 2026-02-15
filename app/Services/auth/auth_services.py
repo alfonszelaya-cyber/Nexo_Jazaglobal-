@@ -22,7 +22,7 @@ from infrastructure.events.event_router import route_event
 from domain.services.payload_validator import validate_payload
 
 
-class AuthService:
+class Authservices:
     """
     Enterprise Authentication Service
 
