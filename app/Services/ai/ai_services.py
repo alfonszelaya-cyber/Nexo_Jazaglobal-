@@ -1,6 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
-# AI SERVICE — ENTERPRISE 3.0
+# AI SERVICES — ENTERPRISE 3.0
 # Connected to Core | Ledger | Event Bus | Modules
 # ============================================================
 
@@ -13,9 +13,9 @@ from infrastructure.events.zyra_bus import emit
 from Core.core_ledger import ledger_record
 
 
-class AIService:
+class AIServices:
     """
-    Enterprise AI Service Layer
+    Enterprise AI Services Layer
     Fully integrated with:
     - Event Bus
     - Ledger
@@ -56,7 +56,6 @@ class AIService:
             "generated_at": datetime.utcnow()
         }
 
-        # Ledger Record
         ledger_record(
             evento="AI_ANALYSIS",
             estado="OK",
@@ -64,7 +63,6 @@ class AIService:
             origen="AI_SERVICE"
         )
 
-        # Emit Event
         emit(
             "AI_ANALYSIS_COMPLETED",
             source="AI_SERVICE",
@@ -91,7 +89,6 @@ class AIService:
             "generated_at": datetime.utcnow()
         }
 
-        # Ledger Record
         ledger_record(
             evento="AI_PREDICTION",
             estado="OK",
@@ -99,7 +96,6 @@ class AIService:
             origen="AI_SERVICE"
         )
 
-        # Emit Event
         emit(
             "AI_PREDICTION_COMPLETED",
             source="AI_SERVICE",
