@@ -5,52 +5,60 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMA
+# ============================
+
+from app.Schemas.billing_schema import (
+    BillingStatusResponse,
+    InvoiceCreateRequest,
+    InvoiceStatusRequest,
+    PaymentProcessRequest,
+    InvoiceResponse,
+    PaymentResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.billing_services import BillingService
+
 
 router = APIRouter(
     prefix="/billing",
     tags=["Billing"]
 )
 
+billing_service = BillingService()
+
+
 # ============================================================
 # BILLING STATUS
 # ============================================================
 
-@router.get("/status")
-def billing_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_BILLING_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=BillingStatusResponse)
+def billing_status():
+    return BillingStatusResponse(
+        module="ZYRA_BILLING_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # CREATE INVOICE
 # ============================================================
 
-@router.post("/create-invoice")
-def create_invoice(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/create-invoice", response_model=InvoiceResponse)
+def create_invoice(payload: InvoiceCreateRequest):
     try:
-        return {
-            "invoice_id": str(uuid.uuid4()),
-            "invoice_data": payload,
-            "status": "created",
-            "created_at": datetime.utcnow()
-        }
-
+        return billing_service.create_invoice(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "INVOICE_CREATION_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
@@ -58,26 +66,14 @@ def create_invoice(payload: Dict[str, Any]) -> Dict[str, Any]:
 # ============================================================
 
 @router.post("/invoice-status")
-def invoice_status(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "invoice_id": payload.get("invoice_id"),
-        "status": "pending",
-        "checked_at": datetime.utcnow()
-    }
+def invoice_status(payload: InvoiceStatusRequest):
+    return billing_service.get_invoice_status(payload)
 
 
 # ============================================================
 # PROCESS PAYMENT
 # ============================================================
 
-@router.post("/process-payment")
-def process_payment(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "payment_id": str(uuid.uuid4()),
-        "amount": payload.get("amount"),
-        "currency": payload.get("currency", "USD"),
-        "status": "processed",
-        "processed_at": datetime.utcnow()
-    }
+@router.post("/process-payment", response_model=PaymentResponse)
+def process_payment(payload: PaymentProcessRequest):
+    return billing_service.process_payment(payload)
