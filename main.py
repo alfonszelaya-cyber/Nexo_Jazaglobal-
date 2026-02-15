@@ -14,7 +14,10 @@ import importlib
 # ============================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
+
+# Mantener compatibilidad absoluta del proyecto
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
 app = FastAPI(
     title="ZYRA NEXO CORE",
@@ -25,14 +28,15 @@ app = FastAPI(
 )
 
 # ============================================================
-# INCLUIR ROUTER PRINCIPAL
+# INCLUIR ROUTER PRINCIPAL (APP)
 # ============================================================
 
 from app.router import router as api_router
 app.include_router(api_router)
 
 # ============================================================
-# LOADER DINÁMICO TOTAL
+# LOADER DINÁMICO TOTAL DEL SISTEMA
+# (Solo para escaneo y verificación)
 # ============================================================
 
 EXCLUDED_FOLDERS = {
@@ -49,6 +53,8 @@ def load_system_modules():
     errors = []
 
     for root, dirs, files in os.walk(BASE_DIR):
+
+        # excluir carpetas basura
         dirs[:] = [d for d in dirs if d not in EXCLUDED_FOLDERS]
 
         for file in files:
@@ -56,6 +62,7 @@ def load_system_modules():
 
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, BASE_DIR)
+
                 module_name = rel_path.replace(os.sep, ".").replace(".py", "")
 
                 try:
@@ -84,7 +91,7 @@ def root():
     }
 
 # ============================================================
-# BOOT
+# BOOT SCAN
 # ============================================================
 
 @app.get("/core/boot")
