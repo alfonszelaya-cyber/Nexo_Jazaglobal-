@@ -13,7 +13,7 @@ from infrastructure.events.zyra_bus import emit
 from Core.core_ledger import ledger_record
 
 
-class AnalyticsService:
+class AnalyticsServices:
     """
     Enterprise Analytics Service Layer
     Integrated with:
