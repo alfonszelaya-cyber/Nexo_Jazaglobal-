@@ -1,109 +1,101 @@
 # ============================================================
 # ZYRA / NEXO
 # ANALYTICS ROUTER — ENTERPRISE 3.0
-# Data Intelligence Layer
+# Conectado a Schemas + Services
 # ============================================================
 
-from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
+from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime
-import uuid
+
+# ===============================
+# IMPORT SCHEMAS
+# ===============================
+
+from app.Schemas.analytics.analytics_schema import (
+    AnalyticsStatusResponse,
+    KPIRequest,
+    KPIResponse,
+    TrendRequest,
+    TrendResponse,
+    ForecastRequest,
+    ForecastResponse
+)
+
+# ===============================
+# IMPORT SERVICES
+# ===============================
+
+from app.Services.analytics.analytics_services import AnalyticsService
+
 
 router = APIRouter(
     prefix="/analytics",
     tags=["Analytics"]
 )
 
+
+# ===============================
+# DEPENDENCY
+# ===============================
+
+def get_service():
+    return AnalyticsService()
+
+
 # ============================================================
 # ANALYTICS STATUS
 # ============================================================
 
-@router.get("/status")
-def analytics_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_ANALYTICS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=AnalyticsStatusResponse)
+def analytics_status():
+    return AnalyticsStatusResponse(
+        module="ZYRA_ANALYTICS_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # KPI SUMMARY
 # ============================================================
 
-@router.post("/kpi-summary")
-def generate_kpi_summary(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/kpi-summary", response_model=KPIResponse)
+def generate_kpi_summary(
+    payload: KPIRequest,
+    service: AnalyticsService = Depends(get_service)
+):
     try:
-        return {
-            "analysis_id": str(uuid.uuid4()),
-            "received_data": payload,
-            "kpi_summary": {
-                "revenue_growth": "12%",
-                "cost_variation": "-3%",
-                "net_margin": "18%"
-            },
-            "generated_at": datetime.utcnow()
-        }
-
+        return service.generate_kpi_summary(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "KPI_SUMMARY_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # TREND ANALYSIS
 # ============================================================
 
-@router.post("/trend-analysis")
-def trend_analysis(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/trend-analysis", response_model=TrendResponse)
+def trend_analysis(
+    payload: TrendRequest,
+    service: AnalyticsService = Depends(get_service)
+):
     try:
-        return {
-            "analysis_id": str(uuid.uuid4()),
-            "trend": "upward",
-            "confidence": 0.91,
-            "input": payload,
-            "generated_at": datetime.utcnow()
-        }
-
+        return service.generate_trend_analysis(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "TREND_ANALYSIS_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # FORECAST ENGINE
 # ============================================================
 
-@router.post("/forecast")
-def forecast(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/forecast", response_model=ForecastResponse)
+def forecast(
+    payload: ForecastRequest,
+    service: AnalyticsService = Depends(get_service)
+):
     try:
-        return {
-            "forecast_id": str(uuid.uuid4()),
-            "projection": "positive_growth",
-            "probability": 0.88,
-            "input": payload,
-            "generated_at": datetime.utcnow()
-        }
-
+        return service.generate_forecast(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "FORECAST_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
