@@ -25,7 +25,7 @@ from app.Schemas.auth.auth_schema import (
 # IMPORT SERVICE
 # ===============================
 
-from app.Services.auth.auth_services import AuthService
+from app.Services.auth.auth_services import AuthServices
 
 # ===============================
 # ROUTER
