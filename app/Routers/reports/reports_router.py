@@ -5,77 +5,75 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.reports_schema import (
+    ReportsStatusResponse,
+    GenerateReportRequest,
+    GenerateReportResponse,
+    GetReportRequest,
+    GetReportResponse,
+    ListReportsResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.reports_services import ReportsService
+
 
 router = APIRouter(
     prefix="/reports",
     tags=["Reports"]
 )
 
+reports_service = ReportsService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def reports_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_REPORTS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=ReportsStatusResponse)
+def reports_status():
+    return ReportsStatusResponse(
+        module="ZYRA_REPORTS_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # GENERATE REPORT
 # ============================================================
 
-@router.post("/generate")
-def generate_report(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/generate", response_model=GenerateReportResponse)
+def generate_report(payload: GenerateReportRequest):
     try:
-        return {
-            "report_id": str(uuid.uuid4()),
-            "report_type": payload.get("type", "GENERAL"),
-            "status": "generated",
-            "generated_at": datetime.utcnow()
-        }
-
+        return reports_service.generate_report(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "REPORT_GENERATION_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # GET REPORT
 # ============================================================
 
-@router.post("/get")
-def get_report(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "report_id": payload.get("report_id"),
-        "status": "retrieved",
-        "retrieved_at": datetime.utcnow()
-    }
+@router.post("/get", response_model=GetReportResponse)
+def get_report(payload: GetReportRequest):
+    return reports_service.get_report(payload)
 
 
 # ============================================================
 # LIST REPORTS
 # ============================================================
 
-@router.get("/list")
-def list_reports() -> Dict[str, Any]:
-
-    return {
-        "total_reports": 0,
-        "reports": [],
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/list", response_model=ListReportsResponse)
+def list_reports():
+    return reports_service.list_reports()
