@@ -1,17 +1,16 @@
 # ============================================================
 # ZYRA / NEXO
 # ROOT APPLICATION ROUTER — ENTERPRISE 3.0
-# Conecta Routers + Schemas Layer
+# Conecta únicamente la capa de Routers (Business Layer)
 # ============================================================
 
 from fastapi import APIRouter
 
 # ============================================================
-# IMPORT MASTER ROUTERS
+# IMPORT MASTER ROUTER (Business Layer)
 # ============================================================
 
 from app.Routers.router_router import router as api_router
-from app.Schemas.router_schema import router as schema_router
 
 # ============================================================
 # ROOT ROUTER
@@ -20,11 +19,7 @@ from app.Schemas.router_schema import router as schema_router
 router = APIRouter()
 
 # ============================================================
-# REGISTER LAYERS
+# REGISTER BUSINESS ROUTERS
 # ============================================================
 
-# API Business Layer
 router.include_router(api_router)
-
-# Schemas Introspection Layer (opcional para debug)
-router.include_router(schema_router)
