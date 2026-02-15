@@ -5,77 +5,76 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.contracts_schema import (
+    ContractsStatusResponse,
+    CreateContractRequest,
+    CreateContractResponse,
+    ActivateContractRequest,
+    ActivateContractResponse,
+    TerminateContractRequest,
+    TerminateContractResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.contracts_services import ContractsService
+
 
 router = APIRouter(
     prefix="/contracts",
     tags=["Contracts"]
 )
 
+contracts_service = ContractsService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def contracts_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_CONTRACTS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=ContractsStatusResponse)
+def contracts_status():
+    return ContractsStatusResponse(
+        module="ZYRA_CONTRACTS_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # CREATE CONTRACT
 # ============================================================
 
-@router.post("/create")
-def create_contract(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/create", response_model=CreateContractResponse)
+def create_contract(payload: CreateContractRequest):
     try:
-        return {
-            "contract_id": str(uuid.uuid4()),
-            "contract_data": payload,
-            "status": "draft_created",
-            "created_at": datetime.utcnow()
-        }
-
+        return contracts_service.create_contract(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "CONTRACT_CREATION_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # ACTIVATE CONTRACT
 # ============================================================
 
-@router.post("/activate")
-def activate_contract(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "contract_id": payload.get("contract_id"),
-        "status": "active",
-        "activated_at": datetime.utcnow()
-    }
+@router.post("/activate", response_model=ActivateContractResponse)
+def activate_contract(payload: ActivateContractRequest):
+    return contracts_service.activate_contract(payload)
 
 
 # ============================================================
 # TERMINATE CONTRACT
 # ============================================================
 
-@router.post("/terminate")
-def terminate_contract(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "contract_id": payload.get("contract_id"),
-        "status": "terminated",
-        "terminated_at": datetime.utcnow()
-    }
+@router.post("/terminate", response_model=TerminateContractResponse)
+def terminate_contract(payload: TerminateContractRequest):
+    return contracts_service.terminate_contract(payload)
