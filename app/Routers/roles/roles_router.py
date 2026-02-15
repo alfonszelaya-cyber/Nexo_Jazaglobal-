@@ -5,79 +5,75 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.roles_schema import (
+    RolesStatusResponse,
+    CreateRoleRequest,
+    CreateRoleResponse,
+    AssignRoleRequest,
+    AssignRoleResponse,
+    ListRolesResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.roles_services import RolesService
+
 
 router = APIRouter(
     prefix="/roles",
     tags=["Roles"]
 )
 
+roles_service = RolesService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def roles_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_ROLES_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=RolesStatusResponse)
+def roles_status():
+    return RolesStatusResponse(
+        module="ZYRA_ROLES_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # CREATE ROLE
 # ============================================================
 
-@router.post("/create")
-def create_role(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/create", response_model=CreateRoleResponse)
+def create_role(payload: CreateRoleRequest):
     try:
-        return {
-            "role_id": str(uuid.uuid4()),
-            "role_name": payload.get("role_name"),
-            "permissions": payload.get("permissions", []),
-            "status": "created",
-            "created_at": datetime.utcnow()
-        }
-
+        return roles_service.create_role(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "ROLE_CREATION_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # ASSIGN ROLE
 # ============================================================
 
-@router.post("/assign")
-def assign_role(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "user_id": payload.get("user_id"),
-        "role_id": payload.get("role_id"),
-        "status": "assigned",
-        "assigned_at": datetime.utcnow()
-    }
+@router.post("/assign", response_model=AssignRoleResponse)
+def assign_role(payload: AssignRoleRequest):
+    return roles_service.assign_role(payload)
 
 
 # ============================================================
 # LIST ROLES
 # ============================================================
 
-@router.get("/list")
-def list_roles() -> Dict[str, Any]:
-
-    return {
-        "total_roles": 0,
-        "roles": [],
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/list", response_model=ListRolesResponse)
+def list_roles():
+    return roles_service.list_roles()
