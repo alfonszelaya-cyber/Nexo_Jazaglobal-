@@ -5,77 +5,76 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.inventory_schema import (
+    InventoryStatusResponse,
+    ProductCreateRequest,
+    ProductCreateResponse,
+    StockUpdateRequest,
+    StockUpdateResponse,
+    StockCheckRequest,
+    StockCheckResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.inventory_services import InventoryService
+
 
 router = APIRouter(
     prefix="/inventory",
     tags=["Inventory"]
 )
 
+inventory_service = InventoryService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def inventory_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_INVENTORY_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=InventoryStatusResponse)
+def inventory_status():
+    return InventoryStatusResponse(
+        module="ZYRA_INVENTORY_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # ADD PRODUCT
 # ============================================================
 
-@router.post("/add-product")
-def add_product(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/add-product", response_model=ProductCreateResponse)
+def add_product(payload: ProductCreateRequest):
     try:
-        return {
-            "product_id": str(uuid.uuid4()),
-            "product_data": payload,
-            "status": "added",
-            "added_at": datetime.utcnow()
-        }
-
+        return inventory_service.add_product(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "PRODUCT_ADD_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # UPDATE STOCK
 # ============================================================
 
-@router.post("/update-stock")
-def update_stock(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "product_id": payload.get("product_id"),
-        "new_stock_level": payload.get("stock"),
-        "updated_at": datetime.utcnow()
-    }
+@router.post("/update-stock", response_model=StockUpdateResponse)
+def update_stock(payload: StockUpdateRequest):
+    return inventory_service.update_stock(payload)
 
 
 # ============================================================
-# GET INVENTORY STATUS
+# CHECK STOCK
 # ============================================================
 
-@router.post("/check-stock")
-def check_stock(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "product_id": payload.get("product_id"),
-        "available_stock": 0,
-        "checked_at": datetime.utcnow()
-    }
+@router.post("/check-stock", response_model=StockCheckResponse)
+def check_stock(payload: StockCheckRequest):
+    return inventory_service.check_stock(payload)
