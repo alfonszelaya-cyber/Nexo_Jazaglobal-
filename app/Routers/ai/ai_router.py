@@ -21,7 +21,7 @@ from app.Schemas.analytics.analytics_schema import (
 # IMPORT SERVICES
 # ===============================
 
-from app.Services.analytics.analytics_services import AnalyticsService
+from app.Services.analytics.analytics_services import AnalyticsServices
 
 
 router = APIRouter(
