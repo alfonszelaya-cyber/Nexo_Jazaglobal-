@@ -5,78 +5,76 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.notifications_schema import (
+    NotificationsStatusResponse,
+    SendNotificationRequest,
+    SendNotificationResponse,
+    ListNotificationsRequest,
+    ListNotificationsResponse,
+    MarkAsReadRequest,
+    MarkAsReadResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.notifications_services import NotificationsService
+
 
 router = APIRouter(
     prefix="/notifications",
     tags=["Notifications"]
 )
 
+notifications_service = NotificationsService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def notifications_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_NOTIFICATIONS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=NotificationsStatusResponse)
+def notifications_status():
+    return NotificationsStatusResponse(
+        module="ZYRA_NOTIFICATIONS_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # SEND NOTIFICATION
 # ============================================================
 
-@router.post("/send")
-def send_notification(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/send", response_model=SendNotificationResponse)
+def send_notification(payload: SendNotificationRequest):
     try:
-        return {
-            "notification_id": str(uuid.uuid4()),
-            "recipient": payload.get("recipient"),
-            "message": payload.get("message"),
-            "status": "sent",
-            "sent_at": datetime.utcnow()
-        }
-
+        return notifications_service.send_notification(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "NOTIFICATION_SEND_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # LIST NOTIFICATIONS
 # ============================================================
 
-@router.post("/list")
-def list_notifications(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "recipient": payload.get("recipient"),
-        "notifications": [],
-        "retrieved_at": datetime.utcnow()
-    }
+@router.post("/list", response_model=ListNotificationsResponse)
+def list_notifications(payload: ListNotificationsRequest):
+    return notifications_service.list_notifications(payload)
 
 
 # ============================================================
 # MARK AS READ
 # ============================================================
 
-@router.post("/mark-read")
-def mark_as_read(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "notification_id": payload.get("notification_id"),
-        "status": "read",
-        "updated_at": datetime.utcnow()
-    }
+@router.post("/mark-read", response_model=MarkAsReadResponse)
+def mark_as_read(payload: MarkAsReadRequest):
+    return notifications_service.mark_as_read(payload)
