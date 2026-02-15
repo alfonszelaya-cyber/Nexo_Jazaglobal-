@@ -5,77 +5,76 @@
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
 from datetime import datetime
-import uuid
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.documents_schema import (
+    DocumentsStatusResponse,
+    CreateDocumentRequest,
+    CreateDocumentResponse,
+    GetDocumentRequest,
+    GetDocumentResponse,
+    DeleteDocumentRequest,
+    DeleteDocumentResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.documents_services import DocumentsService
+
 
 router = APIRouter(
     prefix="/documents",
     tags=["Documents"]
 )
 
+documents_service = DocumentsService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def documents_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_DOCUMENTS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=DocumentsStatusResponse)
+def documents_status():
+    return DocumentsStatusResponse(
+        module="ZYRA_DOCUMENTS_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # CREATE DOCUMENT
 # ============================================================
 
-@router.post("/create")
-def create_document(payload: Dict[str, Any]) -> Dict[str, Any]:
-
+@router.post("/create", response_model=CreateDocumentResponse)
+def create_document(payload: CreateDocumentRequest):
     try:
-        return {
-            "document_id": str(uuid.uuid4()),
-            "document_data": payload,
-            "status": "created",
-            "created_at": datetime.utcnow()
-        }
-
+        return documents_service.create_document(payload)
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "DOCUMENT_CREATION_FAILED",
-                "message": str(e)
-            }
-        )
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # GET DOCUMENT
 # ============================================================
 
-@router.post("/get")
-def get_document(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "document_id": payload.get("document_id"),
-        "status": "retrieved",
-        "retrieved_at": datetime.utcnow()
-    }
+@router.post("/get", response_model=GetDocumentResponse)
+def get_document(payload: GetDocumentRequest):
+    return documents_service.get_document(payload)
 
 
 # ============================================================
 # DELETE DOCUMENT
 # ============================================================
 
-@router.post("/delete")
-def delete_document(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "document_id": payload.get("document_id"),
-        "status": "deleted",
-        "deleted_at": datetime.utcnow()
-    }
+@router.post("/delete", response_model=DeleteDocumentResponse)
+def delete_document(payload: DeleteDocumentRequest):
+    return documents_service.delete_document(payload)
