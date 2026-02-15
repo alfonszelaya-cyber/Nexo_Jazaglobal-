@@ -22,4 +22,4 @@ from app.Services.reports.reports_services import ReportsServices
 from app.Services.roles.roles_services import RolesServices
 from app.Services.security.security_services import SecurityServices
 from app.Services.system.system_services import SystemServices
-from app.Services.users.users_services import UsersServices
+from app.Services.users.users_services import User_services
