@@ -4,93 +4,78 @@
 # User Management & Identity Layer
 # ============================================================
 
-from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
-from datetime import datetime
-import uuid
+from fastapi import APIRouter
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.users_schema import (
+    UserStatusResponse,
+    CreateUserRequest,
+    CreateUserResponse,
+    GetUserRequest,
+    UserResponse,
+    UpdateUserRequest,
+    DeleteUserRequest,
+    UserActionResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.users_services import UsersService
+
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
 
+users_service = UsersService()
+
+
 # ============================================================
 # STATUS
 # ============================================================
 
-@router.get("/status")
-def users_status() -> Dict[str, Any]:
-    return {
-        "module": "ZYRA_USERS_ENGINE",
-        "status": "active",
-        "version": "1.0.0",
-        "timestamp": datetime.utcnow()
-    }
+@router.get("/status", response_model=UserStatusResponse)
+def users_status():
+    return users_service.get_status()
 
 
 # ============================================================
 # CREATE USER
 # ============================================================
 
-@router.post("/create")
-def create_user(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    try:
-        return {
-            "user_id": str(uuid.uuid4()),
-            "username": payload.get("username"),
-            "email": payload.get("email"),
-            "status": "created",
-            "created_at": datetime.utcnow()
-        }
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "USER_CREATION_FAILED",
-                "message": str(e)
-            }
-        )
+@router.post("/create", response_model=CreateUserResponse)
+def create_user(payload: CreateUserRequest):
+    return users_service.create_user(payload)
 
 
 # ============================================================
 # GET USER
 # ============================================================
 
-@router.post("/get")
-def get_user(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "user_id": payload.get("user_id"),
-        "status": "retrieved",
-        "retrieved_at": datetime.utcnow()
-    }
+@router.post("/get", response_model=UserResponse)
+def get_user(payload: GetUserRequest):
+    return users_service.get_user(payload)
 
 
 # ============================================================
 # UPDATE USER
 # ============================================================
 
-@router.post("/update")
-def update_user(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "user_id": payload.get("user_id"),
-        "status": "updated",
-        "updated_at": datetime.utcnow()
-    }
+@router.post("/update", response_model=UserActionResponse)
+def update_user(payload: UpdateUserRequest):
+    return users_service.update_user(payload)
 
 
 # ============================================================
 # DELETE USER
 # ============================================================
 
-@router.post("/delete")
-def delete_user(payload: Dict[str, Any]) -> Dict[str, Any]:
-
-    return {
-        "user_id": payload.get("user_id"),
-        "status": "deleted",
-        "deleted_at": datetime.utcnow()
-}
+@router.post("/delete", response_model=UserActionResponse)
+def delete_user(payload: DeleteUserRequest):
+    return users_service.delete_user(payload)
