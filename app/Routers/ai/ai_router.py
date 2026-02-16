@@ -34,7 +34,7 @@ router = APIRouter(
 # ===============================
 
 def get_service():
-    return AnalyticsService()
+    return AnalyticsServices()
 
 
 # ============================================================
@@ -58,10 +58,10 @@ def ai_status():
 @router.post("/analyze", response_model=MetricResponse)
 def analyze_data(
     payload: MetricRequest,
-    service: AnalyticsService = Depends(get_service)
+    service: AnalyticsServices = Depends(get_service)
 ):
     try:
-        return service.analyze_metric(payload)
+        return service.generate_kpi_summary(payload.dict())
 
     except Exception as e:
         raise HTTPException(
@@ -77,10 +77,10 @@ def analyze_data(
 @router.post("/predict", response_model=MetricResponse)
 def predict(
     payload: MetricRequest,
-    service: AnalyticsService = Depends(get_service)
+    service: AnalyticsServices = Depends(get_service)
 ):
     try:
-        return service.predict_metric(payload)
+        return service.forecast(payload.dict())
 
     except Exception as e:
         raise HTTPException(
