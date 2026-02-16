@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.documents_schema import (
+from app.Schemas.documents.documents_schema import (
     DocumentsStatusResponse,
     CreateDocumentRequest,
     CreateDocumentResponse,
@@ -25,7 +25,7 @@ from app.Schemas.documents_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.documents_services import DocumentsService
+from app.Services.documents.documents_services import DocumentsServices
 
 
 router = APIRouter(
