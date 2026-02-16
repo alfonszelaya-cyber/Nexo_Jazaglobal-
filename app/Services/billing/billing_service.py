@@ -43,14 +43,20 @@ class BillingService:
             "created_at": datetime.utcnow()
         }
 
+        # ------------------------------------------------------
         # Emit event to CORE
+        # ------------------------------------------------------
+
         route_event(
             event_type="FACTURA_EMITIDA",
             payload=invoice,
             source="BILLING_SERVICE"
         )
 
+        # ------------------------------------------------------
         # Register ledger entry
+        # ------------------------------------------------------
+
         ledger_record(
             evento="INVOICE_GENERATED",
             estado="OK",
@@ -72,14 +78,20 @@ class BillingService:
             "paid_at": datetime.utcnow()
         }
 
+        # ------------------------------------------------------
         # Emit financial event
+        # ------------------------------------------------------
+
         route_event(
             event_type="PAGO",
             payload=payment_record,
             source="BILLING_SERVICE"
         )
 
+        # ------------------------------------------------------
         # Ledger registration
+        # ------------------------------------------------------
+
         ledger_record(
             evento="INVOICE_PAID",
             estado="OK",
