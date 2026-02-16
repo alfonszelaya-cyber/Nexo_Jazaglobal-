@@ -1,7 +1,8 @@
 # ============================================================
 # ZYRA / NEXO
 # BILLING SCHEMA — ENTERPRISE 3.0
-# Subscription & Billing Contracts
+# Billing & Subscription Contracts
+# File: app/Schemas/billing/billing_schema.py
 # ============================================================
 
 from pydantic import BaseModel, Field
@@ -10,44 +11,53 @@ from datetime import datetime
 
 
 # ============================================================
-# CREATE SUBSCRIPTION
+# BILLING STATUS
 # ============================================================
 
-class CreateSubscriptionRequest(BaseModel):
-    user_id: str
-    plan_name: str
-    price_usd: float = Field(..., ge=0)
-    billing_cycle: str  # monthly | yearly
-
-
-class SubscriptionResponse(BaseModel):
-    subscription_id: str
-    user_id: str
-    plan_name: str
+class BillingStatusResponse(BaseModel):
+    module: str
     status: str
-    started_at: datetime
-    next_billing_date: Optional[datetime]
+    version: str
+    timestamp: datetime
 
 
 # ============================================================
-# INVOICE
+# CREATE INVOICE
 # ============================================================
+
+class InvoiceCreateRequest(BaseModel):
+    client_id: str
+    amount: float = Field(..., gt=0)
+
 
 class InvoiceResponse(BaseModel):
     invoice_id: str
-    subscription_id: str
+    client_id: str
     amount: float
     currency: str
     status: str
-    issued_at: datetime
+    created_at: datetime
 
 
 # ============================================================
-# PAYMENT CONFIRMATION
+# INVOICE STATUS
 # ============================================================
 
-class PaymentConfirmationResponse(BaseModel):
+class InvoiceStatusRequest(BaseModel):
+    invoice_id: str
+
+
+# ============================================================
+# PAYMENT PROCESS
+# ============================================================
+
+class PaymentProcessRequest(BaseModel):
+    invoice_id: str
+    amount: float = Field(..., gt=0)
+
+
+class PaymentResponse(BaseModel):
     payment_id: str
     invoice_id: str
     status: str
-    confirmed_at: datetime
+    processed_at: datetime
