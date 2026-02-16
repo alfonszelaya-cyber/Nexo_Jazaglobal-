@@ -25,7 +25,7 @@ class FinanceStatusResponse(BaseModel):
 # CREATE LEDGER ENTRY
 # ============================================================
 
-class CreateLedgerEntryRequest(BaseModel):
+class LedgerEntryRequest(BaseModel):   # ← nombre corregido
     event: str = Field(..., description="Financial event name")
     amount: float = Field(..., ge=0, description="Transaction amount")
     currency: str = Field(..., min_length=3, max_length=3)
