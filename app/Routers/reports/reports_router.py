@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.reports_schema import (
+from app.Schemas.reports.reports_schema import (
     ReportsStatusResponse,
     GenerateReportRequest,
     GenerateReportResponse,
@@ -24,7 +24,7 @@ from app.Schemas.reports_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.reports_services import ReportsService
+from app.Services.reports.reports_services import ReportsService
 
 
 router = APIRouter(
