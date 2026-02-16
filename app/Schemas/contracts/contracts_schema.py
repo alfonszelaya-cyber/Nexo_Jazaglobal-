@@ -1,62 +1,75 @@
 # ============================================================
 # ZYRA / NEXO
 # CONTRACTS SCHEMA — ENTERPRISE 3.0
-# Legal & Business Agreement Contracts
+# Contracts & Agreements Contracts Layer
+# File: app/Schemas/contracts/contracts_schema.py
 # ============================================================
 
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
+
+
+# ============================================================
+# STATUS RESPONSE
+# ============================================================
+
+class ContractsStatusResponse(BaseModel):
+    module: str
+    status: str
+    version: str
+    timestamp: datetime
 
 
 # ============================================================
 # CREATE CONTRACT
 # ============================================================
 
-class CreateContractRequest(BaseModel):
-    contract_name: str
-    party_a: str
-    party_b: str
-    effective_date: datetime
-    expiration_date: Optional[datetime]
-    currency: str
-    total_value: float = Field(..., ge=0)
+class ContractCreateRequest(BaseModel):
+    client_id: str = Field(..., description="Client identifier")
+    contract_type: str = Field(..., description="Type of contract")
+    amount: float = Field(..., ge=0)
+    currency: str = Field(default="USD")
+    start_date: datetime
+    end_date: Optional[datetime] = None
 
 
-class ContractResponse(BaseModel):
+class ContractCreateResponse(BaseModel):
     contract_id: str
-    contract_name: str
-    party_a: str
-    party_b: str
-    status: str  # DRAFT | ACTIVE | TERMINATED | EXPIRED
+    client_id: str
+    contract_type: str
+    amount: float
+    currency: str
+    status: str
     created_at: datetime
 
 
 # ============================================================
-# CONTRACT AMENDMENT
+# CONTRACT DETAIL
 # ============================================================
 
-class ContractAmendmentRequest(BaseModel):
+class ContractDetailResponse(BaseModel):
     contract_id: str
-    amendment_reason: str
-    updated_value: Optional[float]
-    updated_expiration: Optional[datetime]
+    client_id: str
+    contract_type: str
+    amount: float
+    currency: str
+    status: str
+    start_date: datetime
+    end_date: Optional[datetime]
+    created_at: datetime
 
 
-class ContractAmendmentResponse(BaseModel):
-    amendment_id: str
+# ============================================================
+# UPDATE CONTRACT
+# ============================================================
+
+class ContractUpdateRequest(BaseModel):
+    status: Optional[str] = None
+    end_date: Optional[datetime] = None
+
+
+class ContractUpdateResponse(BaseModel):
     contract_id: str
     status: str
-    amended_at: datetime
-
-
-# ============================================================
-# CONTRACT SUMMARY
-# ============================================================
-
-class ContractSummary(BaseModel):
-    total_contracts: int
-    active_contracts: int
-    expired_contracts: int
-    terminated_contracts: int
-    generated_at: datetime
+    updated_at: datetime
