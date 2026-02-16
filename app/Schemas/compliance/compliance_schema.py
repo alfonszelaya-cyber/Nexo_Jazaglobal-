@@ -6,7 +6,7 @@
 # ============================================================
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime
 
 
@@ -22,20 +22,16 @@ class ComplianceStatusResponse(BaseModel):
 
 
 # ============================================================
-# ENTITY VALIDATION
+# DOCUMENT VALIDATION
 # ============================================================
 
-class EntityValidationRequest(BaseModel):
-    entity_id: str = Field(..., description="Entity identifier to validate")
-    entity_type: Optional[str] = Field(
-        default=None,
-        description="Optional entity classification"
-    )
+class DocumentValidationRequest(BaseModel):
+    document_type: str = Field(..., description="Type of document to validate")
 
 
-class EntityValidationResponse(BaseModel):
+class DocumentValidationResponse(BaseModel):
     validation_id: str
-    entity_id: str
+    document_type: str
     compliant: bool
     validated_at: datetime
 
@@ -52,4 +48,36 @@ class RiskCheckResponse(BaseModel):
     risk_id: str
     entity_id: str
     risk_level: str
+    checked_at: datetime
+
+
+# ============================================================
+# GENERIC COMPLIANCE EVENT (FOR ROUTERS / CORE)
+# ============================================================
+
+class ComplianceEventRequest(BaseModel):
+    event_type: str
+    source: str
+    payload: Optional[Dict[str, Any]] = None
+
+
+class ComplianceEventResponse(BaseModel):
+    event_id: str
+    status: str
+    recorded_at: datetime
+
+
+# ============================================================
+# ENTITY VALIDATION (IF ROUTER EXPECTS IT)
+# ============================================================
+
+class EntityValidationRequest(BaseModel):
+    entity_id: str
+    entity_type: str
+
+
+class EntityValidationResponse(BaseModel):
+    entity_id: str
+    entity_type: str
+    valid: bool
     checked_at: datetime
