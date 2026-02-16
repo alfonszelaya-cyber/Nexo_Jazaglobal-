@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.notifications_schema import (
+from app.Schemas.notifications.notifications_schema import (
     NotificationsStatusResponse,
     SendNotificationRequest,
     SendNotificationResponse,
@@ -25,7 +25,7 @@ from app.Schemas.notifications_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.notifications_services import NotificationsService
+from app.Services.notifications.notifications_services import NotificationsService
 
 
 router = APIRouter(
