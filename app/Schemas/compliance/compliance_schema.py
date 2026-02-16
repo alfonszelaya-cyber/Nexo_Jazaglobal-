@@ -22,16 +22,20 @@ class ComplianceStatusResponse(BaseModel):
 
 
 # ============================================================
-# DOCUMENT VALIDATION
+# ENTITY VALIDATION
 # ============================================================
 
-class DocumentValidationRequest(BaseModel):
-    document_type: str = Field(..., description="Type of document to validate")
+class EntityValidationRequest(BaseModel):
+    entity_id: str = Field(..., description="Entity identifier to validate")
+    entity_type: Optional[str] = Field(
+        default=None,
+        description="Optional entity classification"
+    )
 
 
-class DocumentValidationResponse(BaseModel):
+class EntityValidationResponse(BaseModel):
     validation_id: str
-    document_type: str
+    entity_id: str
     compliant: bool
     validated_at: datetime
 
