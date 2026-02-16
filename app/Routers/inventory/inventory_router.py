@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.inventory_schema import (
+from app.Schemas.inventory.inventory_schema import (
     InventoryStatusResponse,
     ProductCreateRequest,
     ProductCreateResponse,
