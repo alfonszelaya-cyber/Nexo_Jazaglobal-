@@ -22,12 +22,12 @@ class FinanceStatusResponse(BaseModel):
 
 
 # ============================================================
-# CREATE LEDGER ENTRY
+# LEDGER ENTRY
 # ============================================================
 
-class LedgerEntryRequest(BaseModel):   # ← nombre corregido
+class LedgerEntryRequest(BaseModel):
     event: str = Field(..., description="Financial event name")
-    amount: float = Field(..., ge=0, description="Transaction amount")
+    amount: float = Field(..., ge=0)
     currency: str = Field(..., min_length=3, max_length=3)
     description: Optional[str] = None
     reference_id: Optional[str] = None
@@ -43,7 +43,22 @@ class LedgerEntryResponse(BaseModel):
 
 
 # ============================================================
-# FINANCIAL REPORT REQUEST
+# BALANCE
+# ============================================================
+
+class BalanceRequest(BaseModel):
+    account_id: str
+
+
+class BalanceResponse(BaseModel):
+    account_id: str
+    balance: float
+    currency: str
+    checked_at: datetime
+
+
+# ============================================================
+# FINANCIAL REPORT
 # ============================================================
 
 class FinancialReportRequest(BaseModel):
