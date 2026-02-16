@@ -14,7 +14,7 @@ from datetime import datetime
 # STATUS RESPONSE
 # ============================================================
 
-class IntegrationsStatusResponse(BaseModel):
+class IntegrationStatusResponse(BaseModel):
     module: str
     status: str
     version: str
@@ -25,47 +25,43 @@ class IntegrationsStatusResponse(BaseModel):
 # REGISTER INTEGRATION
 # ============================================================
 
-class RegisterIntegrationRequest(BaseModel):
+class IntegrationRegisterRequest(BaseModel):
     provider_name: str = Field(..., description="Integration provider name")
     api_key: str = Field(..., description="Provider API Key")
     environment: str = Field(..., description="SANDBOX | PRODUCTION")
 
 
-class IntegrationResponse(BaseModel):
+class IntegrationRegisterResponse(BaseModel):
     integration_id: str
     provider_name: str
-    status: str  # ACTIVE | INACTIVE
+    status: str
     created_at: datetime
 
 
 # ============================================================
-# TEST CONNECTION
+# TEST INTEGRATION
 # ============================================================
 
-class TestConnectionRequest(BaseModel):
+class IntegrationTestRequest(BaseModel):
     integration_id: str
 
 
-class TestConnectionResponse(BaseModel):
+class IntegrationTestResponse(BaseModel):
     integration_id: str
     connection_status: str
     tested_at: datetime
 
 
 # ============================================================
-# WEBHOOK EVENT
+# SYNC INTEGRATION
 # ============================================================
 
-class WebhookEventRequest(BaseModel):
-    provider_name: str
-    event_type: str
-    payload: Dict[str, Any]
-    received_at: datetime
+class IntegrationSyncRequest(BaseModel):
+    integration_id: str
+    force: Optional[bool] = False
 
 
-class WebhookEventResponse(BaseModel):
-    event_id: str
-    provider_name: str
-    event_type: str
-    status: str
-    processed_at: datetime
+class IntegrationSyncResponse(BaseModel):
+    integration_id: str
+    sync_status: str
+    synced_at: datetime
