@@ -24,7 +24,7 @@ from app.Schemas.audit.audit_schema import (
 # IMPORT SERVICE
 # ===============================
 
-from app.Services.audit.audit_services import AuditService
+from app.Services.audit.audit_services import AuditServices
 
 
 router = APIRouter(
@@ -38,7 +38,7 @@ router = APIRouter(
 # ===============================
 
 def get_service():
-    return AuditService()
+    return AuditServices()
 
 
 # ============================================================
@@ -62,10 +62,10 @@ def audit_status():
 @router.post("/register", response_model=AuditRegisterResponse)
 def register_audit_event(
     payload: AuditRegisterRequest,
-    service: AuditService = Depends(get_service)
+    service: AuditServices = Depends(get_service)
 ):
     try:
-        return service.register_event(payload)
+        return service.register_event(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -77,10 +77,10 @@ def register_audit_event(
 @router.post("/trace", response_model=AuditTraceResponse)
 def get_audit_trace(
     payload: AuditTraceRequest,
-    service: AuditService = Depends(get_service)
+    service: AuditServices = Depends(get_service)
 ):
     try:
-        return service.trace(payload)
+        return service.trace(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -91,7 +91,7 @@ def get_audit_trace(
 
 @router.get("/events", response_model=AuditListResponse)
 def list_audit_events(
-    service: AuditService = Depends(get_service)
+    service: AuditServices = Depends(get_service)
 ):
     try:
         return service.list_events()
