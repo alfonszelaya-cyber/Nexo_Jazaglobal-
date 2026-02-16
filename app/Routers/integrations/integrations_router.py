@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.integrations_schema import (
+from app.Schemas.integrations.integrations_schema import (
     IntegrationStatusResponse,
     IntegrationRegisterRequest,
     IntegrationRegisterResponse,
@@ -25,7 +25,7 @@ from app.Schemas.integrations_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.integrations_services import IntegrationsService
+from app.Services.integrations.integrations_services import IntegrationsServices
 
 
 router = APIRouter(
