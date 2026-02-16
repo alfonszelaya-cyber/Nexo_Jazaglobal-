@@ -28,7 +28,10 @@ class AnalyticsServices:
 
     def get_status(self) -> Dict[str, Any]:
 
-        emit("ANALYTICS_STATUS_CHECK", source="ANALYTICS_SERVICE")
+        emit(
+            "ANALYTICS_STATUS_CHECK",
+            source="ANALYTICS_SERVICE"
+        )
 
         return {
             "module": "ZYRA_ANALYTICS_ENGINE",
