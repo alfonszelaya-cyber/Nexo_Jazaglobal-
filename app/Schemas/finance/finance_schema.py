@@ -2,7 +2,6 @@
 # ZYRA / NEXO
 # FINANCE SCHEMA — ENTERPRISE 3.0
 # Financial Operations & Ledger Layer
-# File: app/Schemas/finance/finance_schema.py
 # ============================================================
 
 from pydantic import BaseModel, Field
@@ -58,18 +57,15 @@ class BalanceResponse(BaseModel):
 
 
 # ============================================================
-# FINANCIAL REPORT
+# CLOSE PERIOD
 # ============================================================
 
-class FinancialReportRequest(BaseModel):
-    period: str = Field(..., description="DAILY | MONTHLY | YEARLY")
-    year: int = Field(..., ge=2000)
-    month: Optional[int] = Field(None, ge=1, le=12)
+class ClosePeriodRequest(BaseModel):
+    period: str = Field(..., description="Period identifier (e.g. 2026-01)")
+    reason: Optional[str] = None
 
 
-class FinancialReportResponse(BaseModel):
-    report_id: str
-    total_income: float
-    total_expenses: float
-    net_result: float
-    generated_at: datetime
+class ClosePeriodResponse(BaseModel):
+    period: str
+    status: str
+    closed_at: datetime
