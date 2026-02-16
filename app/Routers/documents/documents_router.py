@@ -25,7 +25,7 @@ from app.Schemas.documents.documents_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.documents.documents_services import DocumentsServices
+from app.Service.documents.documents_services import DocumentsService
 
 
 router = APIRouter(
