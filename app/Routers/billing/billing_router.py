@@ -32,7 +32,8 @@ router = APIRouter(
     tags=["Billing"]
 )
 
-billing_service = BillingService()
+# ✅ CORRECTO
+billing_service = BillingServices()
 
 
 # ============================================================
