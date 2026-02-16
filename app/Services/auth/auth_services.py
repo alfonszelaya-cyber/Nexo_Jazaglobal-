@@ -15,10 +15,10 @@ from typing import Dict, Any
 # Ledger
 from Core.core_ledger import ledger_record
 
-# Event Bus
+# Event Router
 from infrastructure.events.event_router import route_event
 
-# Optional: Payload validation
+# Payload Validator
 from domain.services.payload_validator import validate_payload
 
 
@@ -59,9 +59,9 @@ class Authservices:
             "expires_at": expires_at
         }
 
-        # -------------------------------
+        # ------------------------------------------------------
         # Emit Event to CORE
-        # -------------------------------
+        # ------------------------------------------------------
 
         route_event(
             event_type="LOGIN",
@@ -69,9 +69,9 @@ class Authservices:
             source="AUTH_SERVICE"
         )
 
-        # -------------------------------
+        # ------------------------------------------------------
         # Register Ledger Entry
-        # -------------------------------
+        # ------------------------------------------------------
 
         ledger_record(
             evento="USER_LOGIN",
