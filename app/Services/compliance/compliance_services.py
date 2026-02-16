@@ -1,6 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
-# COMPLIANCE SERVICE — ENTERPRISE 3.0
+# COMPLIANCE SERVICES — ENTERPRISE 3.0
 # Regulatory & Validation Logic Layer
 # ============================================================
 
@@ -16,9 +16,9 @@ from Core.core_ledger import ledger_record
 from infrastructure.events.event_router import route_event
 
 
-class ComplianceService:
+class ComplianceServices:
     """
-    Enterprise Compliance Service
+    Enterprise Compliance Services
 
     - Validates regulatory documents
     - Performs risk evaluation
@@ -39,14 +39,12 @@ class ComplianceService:
             "validated_at": datetime.utcnow()
         }
 
-        # Emit compliance validation event
         route_event(
             event_type="DECLARACION_FISCAL",
             payload=result,
             source="COMPLIANCE_SERVICE"
         )
 
-        # Register ledger trace
         ledger_record(
             evento="DOCUMENT_VALIDATED",
             estado="OK",
@@ -69,14 +67,12 @@ class ComplianceService:
             "checked_at": datetime.utcnow()
         }
 
-        # Emit risk alert event
         route_event(
             event_type="ALERTA_ZYRA",
             payload=result,
             source="COMPLIANCE_SERVICE"
         )
 
-        # Register ledger trace
         ledger_record(
             evento="RISK_CHECK_EXECUTED",
             estado="OK",
