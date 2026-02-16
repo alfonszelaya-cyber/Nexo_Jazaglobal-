@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.roles_schema import (
+from app.Schemas.roles.roles_schema import (
     RolesStatusResponse,
     CreateRoleRequest,
     CreateRoleResponse,
@@ -24,7 +24,7 @@ from app.Schemas.roles_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.roles_services import RolesService
+from app.Services.roles.roles_services import RolesService
 
 
 router = APIRouter(
