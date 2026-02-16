@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.contracts_schema import (
+from app.Schemas.contracts.contracts_schema import (
     ContractsStatusResponse,
     CreateContractRequest,
     CreateContractResponse,
@@ -25,7 +25,7 @@ from app.Schemas.contracts_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.contracts_services import ContractsService
+from app.Services.contracts.contracts_services import ContractsService
 
 
 router = APIRouter(
