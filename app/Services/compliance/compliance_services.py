@@ -1,7 +1,8 @@
 # ============================================================
 # ZYRA / NEXO
-# COMPLIANCE SERVICES — ENTERPRISE 3.0
+# COMPLIANCE SERVICE — ENTERPRISE 3.0
 # Regulatory & Validation Logic Layer
+# File: app/Services/compliance/compliance_services.py
 # ============================================================
 
 import uuid
@@ -16,9 +17,9 @@ from Core.core_ledger import ledger_record
 from infrastructure.events.event_router import route_event
 
 
-class ComplianceServices:
+class ComplianceService:
     """
-    Enterprise Compliance Services
+    Enterprise Compliance Service
 
     - Validates regulatory documents
     - Performs risk evaluation
@@ -27,14 +28,14 @@ class ComplianceServices:
     """
 
     # ========================================================
-    # VALIDATE DOCUMENT
+    # VALIDATE ENTITY
     # ========================================================
 
-    def validate_document(self, document_type: str) -> Dict[str, Any]:
+    def validate_entity(self, payload) -> Dict[str, Any]:
 
         result = {
             "validation_id": str(uuid.uuid4()),
-            "document_type": document_type,
+            "entity_id": getattr(payload, "entity_id", None),
             "compliant": True,
             "validated_at": datetime.utcnow()
         }
@@ -55,14 +56,14 @@ class ComplianceServices:
         return result
 
     # ========================================================
-    # RISK CHECK
+    # CHECK RISK
     # ========================================================
 
-    def risk_check(self, entity_id: str) -> Dict[str, Any]:
+    def check_risk(self, payload) -> Dict[str, Any]:
 
         result = {
             "risk_id": str(uuid.uuid4()),
-            "entity_id": entity_id,
+            "entity_id": getattr(payload, "entity_id", None),
             "risk_level": "LOW",
             "checked_at": datetime.utcnow()
         }
@@ -75,6 +76,34 @@ class ComplianceServices:
 
         ledger_record(
             evento="RISK_CHECK_EXECUTED",
+            estado="OK",
+            payload=result,
+            origen="COMPLIANCE_SERVICE"
+        )
+
+        return result
+
+    # ========================================================
+    # REGISTER EVENT
+    # ========================================================
+
+    def register_event(self, payload) -> Dict[str, Any]:
+
+        result = {
+            "event_id": str(uuid.uuid4()),
+            "event_type": getattr(payload, "event_type", "UNKNOWN"),
+            "status": "registered",
+            "registered_at": datetime.utcnow()
+        }
+
+        route_event(
+            event_type="COMPLIANCE_EVENT",
+            payload=result,
+            source="COMPLIANCE_SERVICE"
+        )
+
+        ledger_record(
+            evento="COMPLIANCE_EVENT_REGISTERED",
             estado="OK",
             payload=result,
             origen="COMPLIANCE_SERVICE"
