@@ -2,11 +2,23 @@
 # ZYRA / NEXO
 # INVENTORY SCHEMA — ENTERPRISE 3.0
 # Inventory & Stock Control Layer
+# File: app/Schemas/inventory/inventory_schema.py
 # ============================================================
 
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
+
+
+# ============================================================
+# STATUS RESPONSE
+# ============================================================
+
+class InventoryStatusResponse(BaseModel):
+    module: str
+    status: str
+    version: str
+    timestamp: datetime
 
 
 # ============================================================
@@ -16,7 +28,7 @@ from datetime import datetime
 class CreateProductRequest(BaseModel):
     sku: str
     name: str
-    category: Optional[str]
+    category: Optional[str] = None
     quantity: int = Field(..., ge=0)
     unit_price: float = Field(..., ge=0)
     currency: str
@@ -40,7 +52,7 @@ class ProductResponse(BaseModel):
 class UpdateStockRequest(BaseModel):
     product_id: str
     quantity_change: int  # puede ser negativo
-    reason: Optional[str]
+    reason: Optional[str] = None
 
 
 class StockMovementResponse(BaseModel):
@@ -49,3 +61,17 @@ class StockMovementResponse(BaseModel):
     quantity_change: int
     resulting_stock: int
     timestamp: datetime
+
+
+# ============================================================
+# CHECK STOCK
+# ============================================================
+
+class CheckStockRequest(BaseModel):
+    product_id: str
+
+
+class CheckStockResponse(BaseModel):
+    product_id: str
+    available_stock: int
+    checked_at: datetime
