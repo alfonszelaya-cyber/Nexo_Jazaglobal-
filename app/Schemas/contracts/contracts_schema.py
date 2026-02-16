@@ -1,7 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
 # CONTRACTS SCHEMA — ENTERPRISE 3.0
-# Contracts & Agreements Contracts Layer
 # File: app/Schemas/contracts/contracts_schema.py
 # ============================================================
 
@@ -25,7 +24,7 @@ class ContractsStatusResponse(BaseModel):
 # CREATE CONTRACT
 # ============================================================
 
-class ContractCreateRequest(BaseModel):
+class CreateContractRequest(BaseModel):
     client_id: str = Field(..., description="Client identifier")
     contract_type: str = Field(..., description="Type of contract")
     amount: float = Field(..., ge=0)
@@ -34,7 +33,7 @@ class ContractCreateRequest(BaseModel):
     end_date: Optional[datetime] = None
 
 
-class ContractCreateResponse(BaseModel):
+class CreateContractResponse(BaseModel):
     contract_id: str
     client_id: str
     contract_type: str
@@ -45,31 +44,28 @@ class ContractCreateResponse(BaseModel):
 
 
 # ============================================================
-# CONTRACT DETAIL
+# ACTIVATE CONTRACT
 # ============================================================
 
-class ContractDetailResponse(BaseModel):
+class ActivateContractRequest(BaseModel):
     contract_id: str
-    client_id: str
-    contract_type: str
-    amount: float
-    currency: str
-    status: str
-    start_date: datetime
-    end_date: Optional[datetime]
-    created_at: datetime
 
 
-# ============================================================
-# UPDATE CONTRACT
-# ============================================================
-
-class ContractUpdateRequest(BaseModel):
-    status: Optional[str] = None
-    end_date: Optional[datetime] = None
-
-
-class ContractUpdateResponse(BaseModel):
+class ActivateContractResponse(BaseModel):
     contract_id: str
     status: str
-    updated_at: datetime
+    activated_at: datetime
+
+
+# ============================================================
+# TERMINATE CONTRACT
+# ============================================================
+
+class TerminateContractRequest(BaseModel):
+    contract_id: str
+
+
+class TerminateContractResponse(BaseModel):
+    contract_id: str
+    status: str
+    terminated_at: datetime
