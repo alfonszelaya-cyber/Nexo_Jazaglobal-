@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.logistics_schema import (
+from app.Schemas.logistics.logistics_schema import (
     LogisticsStatusResponse,
     ShipmentCreateRequest,
     ShipmentCreateResponse,
@@ -25,7 +25,7 @@ from app.Schemas.logistics_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.logistics_services import LogisticsService
+from app.Services.logistics.logistics_services import LogisticsService
 
 
 router = APIRouter(
