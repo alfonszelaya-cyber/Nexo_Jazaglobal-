@@ -22,9 +22,9 @@ from infrastructure.events.event_router import route_event
 from domain.services.payload_validator import validate_payload
 
 
-class Authservices:
+class AuthServices:
     """
-    Enterprise Authentication Service
+    Enterprise Authentication Services
 
     - Can emit events to CORE
     - Can register ledger entries
