@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.security_schema import (
+from app.Schemas.security.security_schema import (
     SecurityStatusResponse,
     GenerateApiKeyResponse,
     HashRequest,
@@ -24,7 +24,7 @@ from app.Schemas.security_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.security_services import SecurityService
+from app.Services.security.security_services import SecurityService
 
 
 router = APIRouter(
