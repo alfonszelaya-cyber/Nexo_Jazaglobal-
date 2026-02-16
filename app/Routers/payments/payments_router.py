@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.payments_schema import (
+from app.Schemas.payments.payments_schema import (
     PaymentsStatusResponse,
     InitiatePaymentRequest,
     InitiatePaymentResponse,
@@ -25,7 +25,7 @@ from app.Schemas.payments_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.payments_services import PaymentsService
+from app.Services.payments.payments_services import PaymentsService
 
 
 router = APIRouter(
