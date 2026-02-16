@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.operations_schema import (
+from app.Schemas.operations.operations_schema import (
     OperationsStatusResponse,
     ExecuteOperationRequest,
     ExecuteOperationResponse,
@@ -25,7 +25,7 @@ from app.Schemas.operations_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.operations_services import OperationsService
+from app.Services.operations.operations_services import OperationsService
 
 
 router = APIRouter(
