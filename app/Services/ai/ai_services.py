@@ -2,28 +2,40 @@
 # ZYRA / NEXO
 # AI SERVICES — ENTERPRISE 3.0
 # Connected to Core | Ledger | Event Bus | Modules
+# File: app/Services/ai/ai_services.py
 # ============================================================
 
 from typing import Dict, Any
 from datetime import datetime
 import uuid
 
-# CORE / INFRA IMPORTS
+# ============================================================
+# CORE / INFRASTRUCTURE IMPORTS
+# ============================================================
+
 from infrastructure.events.zyra_bus import emit
 from Core.core_ledger import ledger_record
+
+
+# ============================================================
+# AI SERVICES CLASS
+# ============================================================
 
 class AIServices:
     """
     Enterprise AI Services Layer
+
     Fully integrated with:
     - Event Bus
     - Ledger
-    - Core modules
+    - Core Modules
+    - Templates
     """
 
     # ========================================================
     # STATUS
     # ========================================================
+
     def get_status(self) -> Dict[str, Any]:
         emit("AI_STATUS_CHECK", source="AI_SERVICE")
 
@@ -37,6 +49,7 @@ class AIServices:
     # ========================================================
     # ANALYZE DATA
     # ========================================================
+
     def analyze(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if not payload:
             raise ValueError("Payload cannot be empty")
@@ -51,6 +64,7 @@ class AIServices:
             "generated_at": datetime.utcnow()
         }
 
+        # Ledger Record
         ledger_record(
             evento="AI_ANALYSIS",
             estado="OK",
@@ -58,6 +72,7 @@ class AIServices:
             origen="AI_SERVICE"
         )
 
+        # Emit Event
         emit(
             "AI_ANALYSIS_COMPLETED",
             source="AI_SERVICE",
@@ -69,6 +84,7 @@ class AIServices:
     # ========================================================
     # PREDICT
     # ========================================================
+
     def predict(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if not payload:
             raise ValueError("Payload cannot be empty")
@@ -82,6 +98,7 @@ class AIServices:
             "generated_at": datetime.utcnow()
         }
 
+        # Ledger Record
         ledger_record(
             evento="AI_PREDICTION",
             estado="OK",
@@ -89,6 +106,7 @@ class AIServices:
             origen="AI_SERVICE"
         )
 
+        # Emit Event
         emit(
             "AI_PREDICTION_COMPLETED",
             source="AI_SERVICE",
@@ -96,4 +114,3 @@ class AIServices:
         )
 
         return result
-
