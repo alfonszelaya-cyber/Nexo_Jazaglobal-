@@ -39,7 +39,7 @@ router = APIRouter(
 # ===============================
 
 def get_service():
-    return AnalyticsService()
+    return AnalyticsServices()
 
 
 # ============================================================
@@ -63,10 +63,10 @@ def analytics_status():
 @router.post("/kpi-summary", response_model=KPIResponse)
 def generate_kpi_summary(
     payload: KPIRequest,
-    service: AnalyticsService = Depends(get_service)
+    service: AnalyticsServices = Depends(get_service)
 ):
     try:
-        return service.generate_kpi_summary(payload)
+        return service.generate_kpi_summary(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -78,10 +78,10 @@ def generate_kpi_summary(
 @router.post("/trend-analysis", response_model=TrendResponse)
 def trend_analysis(
     payload: TrendRequest,
-    service: AnalyticsService = Depends(get_service)
+    service: AnalyticsServices = Depends(get_service)
 ):
     try:
-        return service.generate_trend_analysis(payload)
+        return service.trend_analysis(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -93,9 +93,9 @@ def trend_analysis(
 @router.post("/forecast", response_model=ForecastResponse)
 def forecast(
     payload: ForecastRequest,
-    service: AnalyticsService = Depends(get_service)
+    service: AnalyticsServices = Depends(get_service)
 ):
     try:
-        return service.generate_forecast(payload)
+        return service.forecast(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
