@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMA
 # ============================
 
-from app.Schemas.billing_schema import (
+from app.Schemas.billing.billing_schema import (
     BillingStatusResponse,
     InvoiceCreateRequest,
     InvoiceStatusRequest,
@@ -24,7 +24,7 @@ from app.Schemas.billing_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.billing_services import BillingService
+from app.Services.billing.billing_services import BillingServices
 
 
 router = APIRouter(
@@ -56,7 +56,7 @@ def billing_status():
 @router.post("/create-invoice", response_model=InvoiceResponse)
 def create_invoice(payload: InvoiceCreateRequest):
     try:
-        return billing_service.create_invoice(payload)
+        return billing_service.generate_invoice(**payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -67,7 +67,10 @@ def create_invoice(payload: InvoiceCreateRequest):
 
 @router.post("/invoice-status")
 def invoice_status(payload: InvoiceStatusRequest):
-    return billing_service.get_invoice_status(payload)
+    try:
+        return billing_service.get_invoice_status(**payload.dict())
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
@@ -76,4 +79,7 @@ def invoice_status(payload: InvoiceStatusRequest):
 
 @router.post("/process-payment", response_model=PaymentResponse)
 def process_payment(payload: PaymentProcessRequest):
-    return billing_service.process_payment(payload)
+    try:
+        return billing_service.process_payment(**payload.dict())
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
