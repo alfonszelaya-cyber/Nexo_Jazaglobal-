@@ -22,10 +22,10 @@ from app.Schemas.compliance.compliance_schema import (
 )
 
 # ============================
-# IMPORT SERVICE
+# IMPORT SERVICE (FIXED PATH)
 # ============================
 
-from app.Services.compliance_services import ComplianceService
+from app.Services.compliance.compliance_services import ComplianceService
 
 
 router = APIRouter(
@@ -68,7 +68,10 @@ def validate_entity(payload: EntityValidationRequest):
 
 @router.post("/risk-check", response_model=RiskCheckResponse)
 def risk_check(payload: RiskCheckRequest):
-    return compliance_service.check_risk(payload)
+    try:
+        return compliance_service.check_risk(payload)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
@@ -77,4 +80,7 @@ def risk_check(payload: RiskCheckRequest):
 
 @router.post("/register-event", response_model=ComplianceEventResponse)
 def register_compliance_event(payload: ComplianceEventRequest):
-    return compliance_service.register_event(payload)
+    try:
+        return compliance_service.register_event(payload)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
