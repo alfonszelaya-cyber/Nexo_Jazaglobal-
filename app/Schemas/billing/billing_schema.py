@@ -1,63 +1,85 @@
 # ============================================================
 # ZYRA / NEXO
-# BILLING SCHEMA — ENTERPRISE 3.0
-# Billing & Subscription Contracts
-# File: app/Schemas/billing/billing_schema.py
+# BILLING ROUTER — ENTERPRISE 3.0
+# Billing & Subscription Management
 # ============================================================
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from fastapi import APIRouter, HTTPException
 from datetime import datetime
+
+# ============================
+# IMPORT SCHEMAS
+# ============================
+
+from app.Schemas.billing.billing_schema import (
+    BillingStatusResponse,
+    InvoiceCreateRequest,
+    InvoiceStatusRequest,
+    PaymentProcessRequest,
+    InvoiceResponse,
+    PaymentResponse
+)
+
+# ============================
+# IMPORT SERVICE
+# ============================
+
+from app.Services.billing.billing_services import BillingServices
+
+
+router = APIRouter(
+    prefix="/billing",
+    tags=["Billing"]
+)
+
+billing_service = BillingServices()
 
 
 # ============================================================
 # BILLING STATUS
 # ============================================================
 
-class BillingStatusResponse(BaseModel):
-    module: str
-    status: str
-    version: str
-    timestamp: datetime
+@router.get("/status", response_model=BillingStatusResponse)
+def billing_status():
+    return BillingStatusResponse(
+        module="ZYRA_BILLING_ENGINE",
+        status="active",
+        version="3.0.0",
+        timestamp=datetime.utcnow()
+    )
 
 
 # ============================================================
 # CREATE INVOICE
 # ============================================================
 
-class InvoiceCreateRequest(BaseModel):
-    client_id: str
-    amount: float = Field(..., gt=0)
-
-
-class InvoiceResponse(BaseModel):
-    invoice_id: str
-    client_id: str
-    amount: float
-    currency: str
-    status: str
-    created_at: datetime
+@router.post("/create-invoice", response_model=InvoiceResponse)
+def create_invoice(payload: InvoiceCreateRequest):
+    try:
+        return billing_service.generate_invoice(
+            client_id=payload.client_id,
+            amount=payload.amount
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ============================================================
 # INVOICE STATUS
 # ============================================================
 
-class InvoiceStatusRequest(BaseModel):
-    invoice_id: str
+@router.post("/invoice-status")
+def invoice_status(payload: InvoiceStatusRequest):
+    return {
+        "invoice_id": payload.invoice_id,
+        "status": "generated"
+    }
 
 
 # ============================================================
-# PAYMENT PROCESS
+# PROCESS PAYMENT
 # ============================================================
 
-class PaymentProcessRequest(BaseModel):
-    invoice_id: str
-    amount: float = Field(..., gt=0)
-
-
-class PaymentResponse(BaseModel):
-    payment_id: str
-    invoice_id: str
-    status: str
-    processed_at: datetime
+@router.post("/process-payment", response_model=PaymentResponse)
+def process_payment(payload: PaymentProcessRequest):
+    return billing_service.mark_paid(payload.invoice_id)
