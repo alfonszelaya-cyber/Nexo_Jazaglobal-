@@ -46,11 +46,11 @@ def _save(path, data):
 # -------------------------
 
 EVENT_TYPES = {
-    "ENTRADA",      # suma stock
-    "SALIDA",       # resta stock
-    "AJUSTE",       # fija stock (auditoría)
-    "BLOQUEO",      # congela producto
-    "DESBLOQUEO"    # libera producto
+    "ENTRADA",
+    "SALIDA",
+    "AJUSTE",
+    "BLOQUEO",
+    "DESBLOQUEO"
 }
 
 # -------------------------
@@ -147,16 +147,11 @@ def historial_eventos(producto_id: str = None) -> list:
         return [e for e in eventos if e.get("producto_id") == producto_id]
     return eventos
 
-
 # -------------------------
 # REGISTRO INICIAL EN CORE
 # -------------------------
 
 def register_product_in_core(producto_id: str) -> dict:
-    """
-    Inicializa producto en el sistema si no existe.
-    No altera eventos previos.
-    """
 
     stock = _load(STOCK_FILE, {})
 
@@ -172,4 +167,33 @@ def register_product_in_core(producto_id: str) -> dict:
     return {
         "status": "OK",
         "producto_id": producto_id
+    }
+
+# -------------------------
+# UPDATE STOCK DESDE ROUTER
+# -------------------------
+
+def update_product_stock_in_core(producto_id: str, quantity_change: int) -> dict:
+    """
+    Actualiza stock usando el sistema de eventos.
+    El router puede llamarlo directamente.
+    """
+
+    tipo_evento = "ENTRADA" if quantity_change >= 0 else "SALIDA"
+
+    evento = {
+        "producto_id": producto_id,
+        "tipo": tipo_evento,
+        "cantidad": abs(quantity_change),
+        "sector": "SYSTEM_UPDATE"
+    }
+
+    registrar_evento(evento)
+
+    stock_actual = obtener_stock(producto_id)
+
+    return {
+        "status": "OK",
+        "producto_id": producto_id,
+        "new_stock": stock_actual.get("cantidad", 0)
     }
