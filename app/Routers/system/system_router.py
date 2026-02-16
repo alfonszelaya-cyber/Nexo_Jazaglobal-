@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.system_schema import (
+from app.Schemas.system.system_schema import (
     SystemStatusResponse,
     SystemInfoResponse,
     SystemHealthResponse
@@ -21,7 +21,7 @@ from app.Schemas.system_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.system_services import SystemService
+from app.Services.system.system_services import SystemService
 
 
 router = APIRouter(
