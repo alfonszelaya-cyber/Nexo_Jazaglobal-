@@ -16,7 +16,7 @@ from Core.core_ledger import ledger_record
 from infrastructure.events.event_router import route_event
 
 
-class DocumentsServices:
+class DocumentsService:
     """
     Enterprise Documents Service
 
