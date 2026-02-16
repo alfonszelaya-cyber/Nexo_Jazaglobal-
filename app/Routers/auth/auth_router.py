@@ -1,4 +1,3 @@
-
 # ============================================================
 # ZYRA / NEXO
 # AUTH ROUTER — ENTERPRISE 3.0
@@ -36,7 +35,7 @@ router = APIRouter(
     tags=["Auth"]
 )
 
-auth_service = AuthService()
+auth_service = AuthServices()
 
 # ============================================================
 # AUTH STATUS
@@ -58,7 +57,7 @@ def auth_status():
 @router.post("/login", response_model=LoginResponse)
 def login(payload: LoginRequest):
     try:
-        return auth_service.login(payload)
+        return auth_service.login(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -69,7 +68,7 @@ def login(payload: LoginRequest):
 @router.post("/validate", response_model=TokenValidationResponse)
 def validate_token(payload: TokenValidationRequest):
     try:
-        return auth_service.validate_token(payload)
+        return auth_service.validate_token(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -80,6 +79,6 @@ def validate_token(payload: TokenValidationRequest):
 @router.post("/logout", response_model=LogoutResponse)
 def logout(payload: LogoutRequest):
     try:
-        return auth_service.logout(payload)
+        return auth_service.logout(payload.dict())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
