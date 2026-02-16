@@ -25,7 +25,7 @@ from app.Schemas.finance.finance_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.finance.finance_services import FinanceServices
+from app.Service.finance.finance_services import FinanceService
 
 
 router = APIRouter(
