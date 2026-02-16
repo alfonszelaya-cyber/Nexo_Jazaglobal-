@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.compliance_schema import (
+from app.Schemas.compliance.compliance_schema import (
     ComplianceStatusResponse,
     EntityValidationRequest,
     EntityValidationResponse,
