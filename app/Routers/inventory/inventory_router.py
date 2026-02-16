@@ -25,7 +25,7 @@ from app.Schemas.inventory_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.inventory_services import InventoryService
+from app.Services.inventory.inventory_services import InventoryService
 
 
 router = APIRouter(
