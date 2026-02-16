@@ -25,7 +25,7 @@ from app.Schemas.integrations.integrations_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.integrations.integrations_services import IntegrationsServices
+from app.Service.integrations.integrations_services import IntegrationsService
 
 
 router = APIRouter(
