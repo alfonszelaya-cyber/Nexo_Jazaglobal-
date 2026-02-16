@@ -10,7 +10,7 @@ from fastapi import APIRouter
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.users_schema import (
+from app.Schemas.users.users_schema import (
     UserStatusResponse,
     CreateUserRequest,
     CreateUserResponse,
@@ -25,7 +25,7 @@ from app.Schemas.users_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.users_services import UsersService
+from app.Services.users.users_services import UsersService
 
 
 router = APIRouter(
