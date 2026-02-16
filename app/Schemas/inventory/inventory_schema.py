@@ -25,7 +25,7 @@ class InventoryStatusResponse(BaseModel):
 # CREATE PRODUCT
 # ============================================================
 
-class CreateProductRequest(BaseModel):
+class ProductCreateRequest(BaseModel):
     sku: str
     name: str
     category: Optional[str] = None
@@ -34,14 +34,15 @@ class CreateProductRequest(BaseModel):
     currency: str
 
 
-class ProductResponse(BaseModel):
+class ProductCreateResponse(BaseModel):
     product_id: str
     sku: str
     name: str
+    category: Optional[str] = None
     quantity: int
     unit_price: float
     currency: str
-    status: str  # ACTIVE | INACTIVE
+    status: str
     created_at: datetime
 
 
@@ -49,13 +50,13 @@ class ProductResponse(BaseModel):
 # STOCK UPDATE
 # ============================================================
 
-class UpdateStockRequest(BaseModel):
+class StockUpdateRequest(BaseModel):
     product_id: str
-    quantity_change: int  # puede ser negativo
+    quantity_change: int
     reason: Optional[str] = None
 
 
-class StockMovementResponse(BaseModel):
+class StockUpdateResponse(BaseModel):
     movement_id: str
     product_id: str
     quantity_change: int
@@ -64,14 +65,14 @@ class StockMovementResponse(BaseModel):
 
 
 # ============================================================
-# CHECK STOCK
+# STOCK CHECK
 # ============================================================
 
-class CheckStockRequest(BaseModel):
+class StockCheckRequest(BaseModel):
     product_id: str
 
 
-class CheckStockResponse(BaseModel):
+class StockCheckResponse(BaseModel):
     product_id: str
     available_stock: int
     checked_at: datetime
