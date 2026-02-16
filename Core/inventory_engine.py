@@ -1,5 +1,4 @@
 # =========================================
-# inventory_engine.py
 # NEXO / ZYRA — INVENTARIO EVENT-BASED
 # Inmutable | Auditable | Multisector | Largo Plazo
 # =========================================
@@ -11,6 +10,7 @@ import os
 # -------------------------
 # PATHS
 # -------------------------
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -21,6 +21,7 @@ STOCK_FILE = os.path.join(DATA_DIR, "inventory_stock.json")
 # -------------------------
 # UTILIDADES INTERNAS
 # -------------------------
+
 def _now():
     return datetime.utcnow().isoformat()
 
@@ -43,6 +44,7 @@ def _save(path, data):
 # -------------------------
 # TIPOS DE EVENTO SOPORTADOS
 # -------------------------
+
 EVENT_TYPES = {
     "ENTRADA",      # suma stock
     "SALIDA",       # resta stock
@@ -54,6 +56,7 @@ EVENT_TYPES = {
 # -------------------------
 # REGISTRO DE EVENTOS
 # -------------------------
+
 def registrar_evento(evento: dict) -> dict:
     if evento.get("tipo") not in EVENT_TYPES:
         return {"status": "ERROR", "msg": "Tipo de evento inválido"}
@@ -85,6 +88,7 @@ def registrar_evento(evento: dict) -> dict:
 # -------------------------
 # RECONSTRUCCIÓN DE STOCK
 # -------------------------
+
 def _reconstruir_stock(producto_id: str):
     eventos = _load(EVENTS_FILE, [])
     stock = _load(STOCK_FILE, {})
@@ -123,6 +127,7 @@ def _reconstruir_stock(producto_id: str):
 # -------------------------
 # CONSULTAS
 # -------------------------
+
 def obtener_stock(producto_id: str) -> dict:
     stock = _load(STOCK_FILE, {})
     return stock.get(producto_id, {
@@ -141,3 +146,30 @@ def historial_eventos(producto_id: str = None) -> list:
     if producto_id:
         return [e for e in eventos if e.get("producto_id") == producto_id]
     return eventos
+
+
+# -------------------------
+# REGISTRO INICIAL EN CORE
+# -------------------------
+
+def register_product_in_core(producto_id: str) -> dict:
+    """
+    Inicializa producto en el sistema si no existe.
+    No altera eventos previos.
+    """
+
+    stock = _load(STOCK_FILE, {})
+
+    if producto_id not in stock:
+        stock[producto_id] = {
+            "producto_id": producto_id,
+            "cantidad": 0,
+            "bloqueado": False,
+            "actualizado": _now()
+        }
+        _save(STOCK_FILE, stock)
+
+    return {
+        "status": "OK",
+        "producto_id": producto_id
+    }
