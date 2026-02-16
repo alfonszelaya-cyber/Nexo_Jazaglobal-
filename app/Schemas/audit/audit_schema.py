@@ -21,21 +21,63 @@ class AuditStatusResponse(BaseModel):
 
 
 # ============================================================
-# AUDIT EVENT REQUEST
+# REGISTER REQUEST  (AGREGADO PARA ALINEAR ROUTER)
+# ============================================================
+
+class AuditRegisterRequest(BaseModel):
+    event_type: str = Field(..., description="Type of audited event")
+    source: str = Field(..., description="Origin of the event")
+    payload: Optional[Dict[str, Any]] = None
+
+
+# ============================================================
+# REGISTER RESPONSE  (AGREGADO PARA ALINEAR ROUTER)
+# ============================================================
+
+class AuditRegisterResponse(BaseModel):
+    audit_id: str
+    event_type: str
+    status: str
+    recorded_at: datetime
+
+
+# ============================================================
+# TRACE REQUEST  (AGREGADO)
+# ============================================================
+
+class AuditTraceRequest(BaseModel):
+    event_type: Optional[str] = None
+    source: Optional[str] = None
+
+
+# ============================================================
+# TRACE RESPONSE  (AGREGADO)
+# ============================================================
+
+class AuditTraceResponse(BaseModel):
+    results: List[Dict[str, Any]]
+    generated_at: datetime
+
+
+# ============================================================
+# LIST RESPONSE  (AGREGADO)
+# ============================================================
+
+class AuditListResponse(BaseModel):
+    total_events: int
+    events: List[Dict[str, Any]]
+    timestamp: datetime
+
+
+# ============================================================
+# ORIGINAL CLASSES (NO TOCADO)
 # ============================================================
 
 class AuditEventRequest(BaseModel):
-    event_type: str = Field(..., description="Type of audited event")
-    source: str = Field(..., description="Origin of the event")
-    payload: Optional[Dict[str, Any]] = Field(
-        default=None,
-        description="Event data payload"
-    )
+    event_type: str
+    source: str
+    payload: Optional[Dict[str, Any]] = None
 
-
-# ============================================================
-# AUDIT EVENT RESPONSE
-# ============================================================
 
 class AuditEventResponse(BaseModel):
     audit_id: str
@@ -44,10 +86,6 @@ class AuditEventResponse(BaseModel):
     recorded_at: datetime
 
 
-# ============================================================
-# AUDIT REPORT RESPONSE
-# ============================================================
-
 class AuditReportResponse(BaseModel):
     report_id: str
     total_events: int
@@ -55,10 +93,6 @@ class AuditReportResponse(BaseModel):
     warnings_detected: int
     generated_at: datetime
 
-
-# ============================================================
-# AUDIT LOG ENTRY
-# ============================================================
 
 class AuditLogEntry(BaseModel):
     event_type: str
