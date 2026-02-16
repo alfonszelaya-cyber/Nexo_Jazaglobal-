@@ -11,7 +11,7 @@ from datetime import datetime
 # IMPORT SCHEMAS
 # ============================
 
-from app.Schemas.finance_schema import (
+from app.Schemas.finance.finance_schema import (
     FinanceStatusResponse,
     LedgerEntryRequest,
     LedgerEntryResponse,
@@ -25,7 +25,7 @@ from app.Schemas.finance_schema import (
 # IMPORT SERVICE
 # ============================
 
-from app.Services.finance_services import FinanceService
+from app.Services.finance.finance_services import FinanceServices
 
 
 router = APIRouter(
