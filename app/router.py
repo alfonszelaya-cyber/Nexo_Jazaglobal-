@@ -5,7 +5,15 @@
 # Clean • Stable • Production Ready
 # ============================================================
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+# ============================================================
+# DATABASE & MODELS
+# ============================================================
+
+from app.database import get_db
+from app.models.user_model import User
 
 # ============================================================
 # IMPORT MASTER BUSINESS ROUTER
@@ -28,3 +36,15 @@ router.include_router(
     prefix="",
     tags=["ZYRA NEXO API"]
 )
+
+# ============================================================
+# DATABASE TEST ENDPOINT
+# ============================================================
+
+@router.get("/users", tags=["Database Test"])
+def list_users(db: Session = Depends(get_db)):
+    """
+    Returns all users from PostgreSQL.
+    """
+    users = db.query(User).all()
+    return users
