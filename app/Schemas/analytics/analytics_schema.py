@@ -110,3 +110,30 @@ class ForecastResponse(BaseModel):
     period: str
     predicted_value: float
     generated_at: datetime
+
+
+# ============================================================
+# TREND REQUEST (LO QUE FALTABA)
+# ============================================================
+
+class TrendRequest(BaseModel):
+    trend_type: str = Field(..., description="Type of trend (sales, growth, revenue, etc)")
+    start_date: datetime = Field(..., description="Start date for trend analysis")
+    end_date: datetime = Field(..., description="End date for trend analysis")
+    filters: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Optional filters for trend calculation"
+    )
+
+
+# ============================================================
+# TREND RESPONSE (LO QUE FALTABA)
+# ============================================================
+
+class TrendResponse(BaseModel):
+    trend_id: str
+    trend_type: str
+    period_start: datetime
+    period_end: datetime
+    values: List[float]
+    generated_at: datetime
