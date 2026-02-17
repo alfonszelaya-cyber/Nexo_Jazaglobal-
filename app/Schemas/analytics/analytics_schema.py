@@ -62,3 +62,26 @@ class DashboardResponse(BaseModel):
     dashboard_name: str
     metrics: Dict[str, float]
     generated_at: datetime
+
+
+# ============================================================
+# KPI REQUEST (COMPATIBILIDAD CON ROUTER)
+# ============================================================
+
+class KPIRequest(BaseModel):
+    kpi_name: str = Field(..., description="Name of the KPI")
+    filters: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Optional filters for KPI calculation"
+    )
+
+
+# ============================================================
+# KPI RESPONSE (COMPATIBILIDAD CON ROUTER)
+# ============================================================
+
+class KPIResponse(BaseModel):
+    kpi_id: str
+    kpi_name: str
+    value: float
+    calculated_at: datetime
