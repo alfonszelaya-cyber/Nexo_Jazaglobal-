@@ -1,108 +1,140 @@
 # ============================================================
 # ZYRA / NEXO
 # USERS SERVICE — ENTERPRISE 3.0
-# User Management Logic Layer
+# Business Logic & Database Persistence
 # ============================================================
 
-import uuid
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models.user_model import User
 from datetime import datetime
-from typing import Dict, Any, List
-
-# ============================================================
-# CORE / INFRA CONNECTIONS
-# ============================================================
-
-from Core.module.users_engine import register_user_core
-from Core.core_ledger import ledger_record
-from infrastructure.events.event_router import route_event
 
 
 class UsersService:
-    """
-    Enterprise Users Service
 
-    - Registers users through Core
-    - Emits system events
-    - Writes immutable ledger traces
-    """
+    def __init__(self):
+        # Conexión profesional por instancia
+        self.db: Session = SessionLocal()
+
+    # ========================================================
+    # STATUS
+    # ========================================================
+
+    def get_status(self):
+        """Verifica que el servicio de identidad esté online."""
+        return {
+            "service": "IDENTITY_SERVICE",
+            "status": "active",
+            "timestamp": datetime.utcnow()
+        }
 
     # ========================================================
     # CREATE USER
     # ========================================================
 
-    def create_user(
-        self,
-        username: str,
-        email: str,
-        password: str,
-        roles: List[str]
-    ) -> Dict[str, Any]:
+    def create_user(self, data):
+        """
+        Crea un usuario desde el payload del router.
+        Recibe el objeto CreateUserRequest completo.
+        """
+        try:
+            new_user = User(
+                username=data.username,
+                email=data.email,
+                password=data.password,
+                roles=data.roles if hasattr(data, "roles") else "user",
+                is_active=True,
+                created_at=datetime.utcnow()
+            )
 
-        if not username or not email or not password:
-            raise ValueError("Username, email and password required")
+            self.db.add(new_user)
+            self.db.commit()
+            self.db.refresh(new_user)
 
-        user_id = str(uuid.uuid4())
+            return {
+                "success": True,
+                "message": f"Usuario {new_user.username} creado exitosamente",
+                "user_id": new_user.id
+            }
 
-        # Call Core module
-        register_user_core(
-            user_id=user_id,
-            username=username,
-            email=email
-        )
+        except Exception as e:
+            self.db.rollback()
+            return {
+                "success": False,
+                "message": f"Error al crear usuario: {str(e)}"
+            }
 
-        result = {
-            "user_id": user_id,
-            "username": username,
-            "email": email,
-            "roles": roles or [],
-            "status": "created",
-            "created_at": datetime.utcnow()
-        }
-
-        # Emit event
-        route_event(
-            event_type="USER_CREATED",
-            payload=result,
-            source="USERS_SERVICE"
-        )
-
-        # Ledger trace
-        ledger_record(
-            evento="USER_CREATED",
-            estado="SUCCESS",
-            payload=result,
-            origen="USERS_SERVICE"
-        )
-
-        return result
+        finally:
+            self.db.close()
 
     # ========================================================
     # GET USER
     # ========================================================
 
-    def get_user(self, user_id: str) -> Dict[str, Any]:
+    def get_user(self, payload):
+        """Busca un usuario por ID o Email."""
+        try:
+            user = self.db.query(User).filter(
+                (User.id == payload.user_id) |
+                (User.email == payload.email)
+            ).first()
 
-        if not user_id:
-            raise ValueError("User ID required")
+            if not user:
+                return {"success": False, "message": "Usuario no encontrado"}
 
-        result = {
-            "user_id": user_id,
-            "status": "active",
-            "retrieved_at": datetime.utcnow()
-        }
+            return user
 
-        return result
+        finally:
+            self.db.close()
 
     # ========================================================
-    # LIST USERS
+    # UPDATE USER
     # ========================================================
 
-    def list_users(self) -> Dict[str, Any]:
+    def update_user(self, payload):
+        """Actualiza información de un usuario."""
+        try:
+            user = self.db.query(User).filter(
+                User.id == payload.user_id
+            ).first()
 
-        result = {
-            "total": 0,
-            "users": [],
-            "generated_at": datetime.utcnow()
-        }
+            if not user:
+                return {"success": False, "message": "Usuario no encontrado"}
 
-        return result
+            for key, value in payload.dict(exclude_unset=True).items():
+                setattr(user, key, value)
+
+            self.db.commit()
+
+            return {
+                "success": True,
+                "message": "Usuario actualizado"
+            }
+
+        finally:
+            self.db.close()
+
+    # ========================================================
+    # DELETE USER
+    # ========================================================
+
+    def delete_user(self, payload):
+        """Elimina un usuario del sistema."""
+        try:
+            user = self.db.query(User).filter(
+                User.id == payload.user_id
+            ).first()
+
+            if not user:
+                return {"success": False, "message": "Usuario no encontrado"}
+
+            self.db.delete(user)
+            self.db.commit()
+
+            return {
+                "success": True,
+                "message": "Usuario eliminado"
+            }
+
+        finally:
+            self.db.close()
