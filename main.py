@@ -8,6 +8,7 @@ from fastapi import FastAPI
 import os
 import sys
 import importlib
+from contextlib import asynccontextmanager
 
 # ============================================================
 # CONFIGURACIÓN DE RUTAS
@@ -19,6 +20,22 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 # ============================================================
+# LIFESPAN (REEMPLAZO PROFESIONAL DE ON_EVENT)
+# ============================================================
+
+from app.database import engine, Base
+import app.models.user_model  # NO borrar
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Esto ocurre al arrancar (Startup)
+    Base.metadata.create_all(bind=engine)
+    print("✅ DATABASE CONNECTED & TABLES READY")
+    yield
+    # Esto ocurre al cerrar (Shutdown)
+    print("✅ SISTEMA CERRADO CORRECTAMENTE")
+
+# ============================================================
 # FASTAPI APP
 # ============================================================
 
@@ -27,7 +44,8 @@ app = FastAPI(
     version="3.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
+    lifespan=lifespan  # Activamos la conexión de base de datos aquí
 )
 
 # ============================================================
@@ -36,20 +54,6 @@ app = FastAPI(
 
 from app.router import router
 app.include_router(router)
-
-# ============================================================
-# DATABASE INIT (APP LAYER REAL)
-# ============================================================
-
-from app.database import engine, Base
-
-# IMPORTAR MODELOS PARA REGISTRARLOS EN SQLALCHEMY
-import app.models.user_model  # NO borrar
-
-@app.on_event("startup")
-async def startup_event():
-    Base.metadata.create_all(bind=engine)
-    print("✅ DATABASE CONNECTED & TABLES READY")
 
 # ============================================================
 # MOTOR DE ESCANEO DINÁMICO
@@ -70,15 +74,12 @@ def load_system_modules():
     errors = []
 
     for root, dirs, files in os.walk(BASE_DIR):
-
         dirs[:] = [d for d in dirs if d not in EXCLUDED_FOLDERS]
 
         for file in files:
             if file.endswith(".py") and not file.startswith("__") and file != "main.py":
-
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, BASE_DIR)
-
                 module_name = rel_path.replace(os.sep, ".").replace(".py", "")
 
                 try:
