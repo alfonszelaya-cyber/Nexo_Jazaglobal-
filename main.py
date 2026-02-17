@@ -10,12 +10,11 @@ import sys
 import importlib
 
 # ============================================================
-# CONFIGURACIÓN DE RUTAS (CRÍTICO PARA LOS 18 ERRORES)
+# CONFIGURACIÓN DE RUTAS
 # ============================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Esto permite que el Router de la App y los Servicios se encuentren entre sí
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
@@ -28,30 +27,30 @@ app = FastAPI(
 )
 
 # ============================================================
-# INCLUIR ROUTER PRINCIPAL (EL QUE CONSUME LOS SERVICIOS)
+# INCLUIR ROUTER PRINCIPAL
 # ============================================================
 
 from app.router import router as api_router
 app.include_router(api_router)
 
 # ============================================================
-# 🔥 INYECCIÓN ENTERPRISE — DATABASE INIT
-# (NO rompe nada existente)
+# 🔥 DATABASE INIT CORRECTO (APP LAYER)
 # ============================================================
 
 try:
-    from infrastructure.database.db_init import init_db
+    from app.database import engine, Base
+    from app.models import user_model  # Importa modelos para registrarlos
 
     @app.on_event("startup")
     async def startup_event():
-        init_db()
-        print("✅ DATABASE CONNECTED")
+        Base.metadata.create_all(bind=engine)
+        print("✅ DATABASE CONNECTED & TABLES READY")
 
 except Exception as e:
     print("⚠️ Database init skipped:", str(e))
 
 # ============================================================
-# MOTOR DE LECTURA Y ESCANEO DINÁMICO
+# MOTOR DE ESCANEO DINÁMICO
 # ============================================================
 
 EXCLUDED_FOLDERS = {
