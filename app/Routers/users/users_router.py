@@ -81,6 +81,6 @@ def update_user(payload: UpdateUserRequest):
 # DELETE USER
 # ============================================================
 
-@router.post("/delete", response_model=UserActionResponse):
+@router.post("/delete", response_model=UserActionResponse)
 def delete_user(payload: DeleteUserRequest):
     return users_service.delete_user(payload)
