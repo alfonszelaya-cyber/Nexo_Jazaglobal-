@@ -30,20 +30,31 @@ class UsersService:
     # CREATE USER
     # ========================================================
 
-    def create_user(self, username: str, email: str) -> Dict[str, Any]:
+    def create_user(
+        self,
+        username: str,
+        email: str,
+        password: str,
+        roles: List[str]
+    ) -> Dict[str, Any]:
 
-        if not username or not email:
-            raise ValueError("Username and email required")
+        if not username or not email or not password:
+            raise ValueError("Username, email and password required")
 
         user_id = str(uuid.uuid4())
 
         # Call Core module
-        register_user_core(user_id, username, email)
+        register_user_core(
+            user_id=user_id,
+            username=username,
+            email=email
+        )
 
         result = {
             "user_id": user_id,
             "username": username,
             "email": email,
+            "roles": roles or [],
             "status": "created",
             "created_at": datetime.utcnow()
         }
