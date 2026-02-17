@@ -85,3 +85,27 @@ class KPIResponse(BaseModel):
     kpi_name: str
     value: float
     calculated_at: datetime
+
+
+# ============================================================
+# TREND REQUEST (COMPATIBILIDAD TOTAL CON ROUTER)
+# ============================================================
+
+class TrendRequest(BaseModel):
+    metric_name: str = Field(..., description="Metric to analyze trend")
+    start_date: datetime = Field(..., description="Start date for trend analysis")
+    end_date: datetime = Field(..., description="End date for trend analysis")
+    filters: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Optional filters for trend analysis"
+    )
+
+
+# ============================================================
+# TREND RESPONSE (COMPATIBILIDAD TOTAL CON ROUTER)
+# ============================================================
+
+class TrendResponse(BaseModel):
+    metric_name: str
+    data_points: List[Dict[str, Any]]
+    generated_at: datetime
