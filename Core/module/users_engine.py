@@ -44,12 +44,23 @@ def create_user(payload: dict) -> dict:
 
 
 # ============================================================
-# VALIDATE USER CREDENTIALS  🔥 (LO QUE FALTABA)
+# 🔥 REGISTER USER IN CORE (LO QUE FALTABA)
+# ============================================================
+
+def register_user_core(payload: dict) -> dict:
+    """
+    Función compatible con UsersService.
+    Alias enterprise para create_user.
+    """
+    return create_user(payload)
+
+
+# ============================================================
+# VALIDATE USER CREDENTIALS
 # ============================================================
 
 def validate_user_credentials(email: str, password: str) -> dict:
 
-    # Simulación enterprise (en producción va DB)
     fake_user = {
         "user_id": str(uuid.uuid4()),
         "email": email,
