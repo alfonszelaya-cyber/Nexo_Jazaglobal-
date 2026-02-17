@@ -18,6 +18,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
+# ============================================================
+# FASTAPI APP
+# ============================================================
+
 app = FastAPI(
     title="ZYRA NEXO CORE",
     version="3.0.0",
@@ -30,24 +34,22 @@ app = FastAPI(
 # INCLUIR ROUTER PRINCIPAL
 # ============================================================
 
-from app.router import router as api_router
-app.include_router(api_router)
+from app.router import router
+app.include_router(router)
 
 # ============================================================
-# 🔥 DATABASE INIT CORRECTO (APP LAYER)
+# DATABASE INIT (APP LAYER REAL)
 # ============================================================
 
-try:
-    from app.database import engine, Base
-    from app.models import user_model  # Importa modelos para registrarlos
+from app.database import engine, Base
 
-    @app.on_event("startup")
-    async def startup_event():
-        Base.metadata.create_all(bind=engine)
-        print("✅ DATABASE CONNECTED & TABLES READY")
+# IMPORTAR MODELOS PARA REGISTRARLOS EN SQLALCHEMY
+import app.models.user_model  # NO borrar
 
-except Exception as e:
-    print("⚠️ Database init skipped:", str(e))
+@app.on_event("startup")
+async def startup_event():
+    Base.metadata.create_all(bind=engine)
+    print("✅ DATABASE CONNECTED & TABLES READY")
 
 # ============================================================
 # MOTOR DE ESCANEO DINÁMICO
