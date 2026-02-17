@@ -15,9 +15,8 @@ from datetime import datetime
 # ============================================================
 
 class UserStatusResponse(BaseModel):
-    module: str
+    service: str
     status: str
-    version: str
     timestamp: datetime
 
 
@@ -33,12 +32,9 @@ class CreateUserRequest(BaseModel):
 
 
 class CreateUserResponse(BaseModel):
+    success: bool
+    message: str
     user_id: str
-    username: str
-    email: EmailStr
-    roles: List[str]
-    status: str
-    created_at: datetime
 
 
 # ============================================================
@@ -50,12 +46,16 @@ class GetUserRequest(BaseModel):
 
 
 class UserResponse(BaseModel):
-    user_id: str
+    id: str
     username: str
     email: EmailStr
-    roles: List[str]
-    status: str  # ACTIVE | SUSPENDED | LOCKED
+    password: str
+    roles: Optional[List[str]] = []
+    is_active: bool
     created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 
 # ============================================================
@@ -66,8 +66,9 @@ class UpdateUserRequest(BaseModel):
     user_id: str
     username: Optional[str] = None
     email: Optional[EmailStr] = None
+    password: Optional[str] = None
     roles: Optional[List[str]] = None
-    new_status: Optional[str] = None
+    is_active: Optional[bool] = None
 
 
 # ============================================================
@@ -83,7 +84,5 @@ class DeleteUserRequest(BaseModel):
 # ============================================================
 
 class UserActionResponse(BaseModel):
-    user_id: str
-    action: str
-    status: str
-    executed_at: datetime
+    success: bool
+    message: str
