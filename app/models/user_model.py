@@ -10,7 +10,7 @@ from datetime import datetime
 from sqlalchemy import String, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base
+from app.database import Base
 
 
 class User(Base):
@@ -20,19 +20,11 @@ class User(Base):
 
     __tablename__ = "users"
 
-    # ========================================================
-    # PRIMARY KEY
-    # ========================================================
-
     id: Mapped[str] = mapped_column(
         String,
         primary_key=True,
         default=lambda: str(uuid.uuid4())
     )
-
-    # ========================================================
-    # USER FIELDS
-    # ========================================================
 
     username: Mapped[str] = mapped_column(
         String(100),
