@@ -2,11 +2,23 @@
 # ZYRA / NEXO
 # USERS SCHEMA — ENTERPRISE 3.0
 # Identity & User Governance Layer
+# File: app/Schemas/users/users_schema.py
 # ============================================================
 
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from datetime import datetime
+
+
+# ============================================================
+# STATUS RESPONSE
+# ============================================================
+
+class UserStatusResponse(BaseModel):
+    module: str
+    status: str
+    version: str
+    timestamp: datetime
 
 
 # ============================================================
@@ -20,6 +32,23 @@ class CreateUserRequest(BaseModel):
     roles: Optional[List[str]] = []
 
 
+class CreateUserResponse(BaseModel):
+    user_id: str
+    username: str
+    email: EmailStr
+    roles: List[str]
+    status: str
+    created_at: datetime
+
+
+# ============================================================
+# GET USER
+# ============================================================
+
+class GetUserRequest(BaseModel):
+    user_id: str
+
+
 class UserResponse(BaseModel):
     user_id: str
     username: str
@@ -30,22 +59,31 @@ class UserResponse(BaseModel):
 
 
 # ============================================================
-# UPDATE USER STATUS
+# UPDATE USER
 # ============================================================
 
-class UpdateUserStatusRequest(BaseModel):
+class UpdateUserRequest(BaseModel):
     user_id: str
-    new_status: str
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    roles: Optional[List[str]] = None
+    new_status: Optional[str] = None
 
 
 # ============================================================
-# USER PROFILE
+# DELETE USER
 # ============================================================
 
-class UserProfileResponse(BaseModel):
+class DeleteUserRequest(BaseModel):
     user_id: str
-    username: str
-    email: EmailStr
-    roles: List[str]
-    last_login: Optional[datetime]
+
+
+# ============================================================
+# GENERIC USER ACTION RESPONSE
+# ============================================================
+
+class UserActionResponse(BaseModel):
+    user_id: str
+    action: str
     status: str
+    executed_at: datetime
