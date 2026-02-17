@@ -14,16 +14,12 @@ def _now():
     return datetime.now(timezone.utc).isoformat()
 
 # ============================================================
-# CREAR EMBARQUE BASE (NO TOCAR)
+# CREAR EMBARQUE BASE
 # ============================================================
 
 def create_shipment(payload: dict) -> dict:
-    """
-    Crea un embarque lógico.
-    El evento real lo emite el router del módulo.
-    """
     return {
-        "shipment_id": payload.get("shipment_id"),
+        "shipment_id": payload.get("shipment_id") or str(uuid.uuid4()),
         "origen": payload.get("origen"),
         "destino": payload.get("destino"),
         "created_at": _now(),
@@ -31,46 +27,33 @@ def create_shipment(payload: dict) -> dict:
     }
 
 # ============================================================
-# REGISTER SHIPMENT IN CORE (COMPATIBLE CON ROUTERS)
+# REGISTER
 # ============================================================
 
 def register_shipment_in_core(payload: dict) -> dict:
-    shipment_id = payload.get("shipment_id") or str(uuid.uuid4())
+    return create_shipment(payload)
 
-    return {
-        "shipment_id": shipment_id,
-        "shipment_type": payload.get("shipment_type", "ASIA"),
-        "origen": payload.get("origen"),
-        "destino": payload.get("destino"),
-        "carrier": payload.get("carrier"),
-        "tracking_number": payload.get("tracking_number"),
-        "status": "CREATED",
-        "created_at": _now(),
-        "history": [
-            {
-                "status": "CREATED",
-                "timestamp": _now()
-            }
-        ]
-    }
+# Alias en español (por si el router usa este nombre)
+def registrar_envio_en_core(payload: dict) -> dict:
+    return register_shipment_in_core(payload)
 
 # ============================================================
-# UPDATE SHIPMENT STATUS
+# UPDATE STATUS
 # ============================================================
 
-def update_shipment_status_in_core(
-    shipment_id: str,
-    new_status: str
-) -> dict:
-
+def update_shipment_status_in_core(shipment_id: str, new_status: str) -> dict:
     return {
         "shipment_id": shipment_id,
-        "new_status": new_status,
+        "status": new_status,
         "updated_at": _now()
     }
 
+# Alias español
+def actualizar_estado_envio_en_core(shipment_id: str, new_status: str) -> dict:
+    return update_shipment_status_in_core(shipment_id, new_status)
+
 # ============================================================
-# TRACK SHIPMENT
+# TRACK
 # ============================================================
 
 def track_shipment_in_core(shipment_id: str) -> dict:
@@ -80,8 +63,27 @@ def track_shipment_in_core(shipment_id: str) -> dict:
         "last_update": _now()
     }
 
+# Alias
+def rastrear_envio_en_core(shipment_id: str) -> dict:
+    return track_shipment_in_core(shipment_id)
+
 # ============================================================
-# CANCEL SHIPMENT
+# CONFIRM DELIVERY
+# ============================================================
+
+def confirm_delivery_in_core(shipment_id: str) -> dict:
+    return {
+        "shipment_id": shipment_id,
+        "status": "DELIVERED",
+        "delivered_at": _now()
+    }
+
+# Alias español
+def confirmar_entrega_en_core(shipment_id: str) -> dict:
+    return confirm_delivery_in_core(shipment_id)
+
+# ============================================================
+# CANCEL
 # ============================================================
 
 def cancel_shipment_in_core(shipment_id: str) -> dict:
@@ -90,3 +92,7 @@ def cancel_shipment_in_core(shipment_id: str) -> dict:
         "status": "CANCELLED",
         "cancelled_at": _now()
     }
+
+# Alias español
+def cancelar_envio_en_core(shipment_id: str) -> dict:
+    return cancel_shipment_in_core(shipment_id)
