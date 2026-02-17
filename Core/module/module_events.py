@@ -1,10 +1,15 @@
-# module_events.py
-# NEXO / ZYRA — LOGÍSTICA ASIA
-# EVENTOS PROPIOS DEL MÓDULO
-# PASIVO | CANÓNICO
+# ============================================================
+# NEXO / ZYRA — CORE MODULE EVENTS ENGINE
+# Central Event Registry for Support Modules
+# Passive | Canonical | Enterprise Ready
+# ============================================================
 
 from datetime import datetime, timezone
 import uuid
+
+# ============================================================
+# EVENT CATALOG
+# ============================================================
 
 MODULE_EVENTS = {
     "SHIPMENT_CREATED",
@@ -12,44 +17,61 @@ MODULE_EVENTS = {
     "TRACKING_UPDATED",
     "CUSTOMS_CLEARED",
     "DELIVERY_CONFIRMED",
-    "LOGISTICS_ALERT"
+    "LOGISTICS_ALERT",
+
+    "OPERATION_EXECUTED",
+    "OPERATION_UPDATED",
+    "OPERATION_CANCELLED",
+
+    "NOTIFICATION_SENT",
+    "NOTIFICATION_FAILED",
+
+    "DOCUMENT_UPLOADED",
+    "DOCUMENT_ARCHIVED"
 }
 
 # ============================================================
-# INTERNAL TIME
+# UTIL
 # ============================================================
 
 def _now():
     return datetime.now(timezone.utc).isoformat()
 
 # ============================================================
-# GENERIC MODULE EVENT
+# GENERIC EVENT REGISTRAR
 # ============================================================
 
-def register_module_event(event_type: str, payload: dict) -> dict:
+def register_event(event_type: str, payload: dict) -> dict:
     if event_type not in MODULE_EVENTS:
         return {
             "status": "ERROR",
-            "message": f"Invalid event type: {event_type}"
+            "message": "Invalid module event",
+            "event_type": event_type
         }
 
     return {
         "event_id": str(uuid.uuid4()),
         "event_type": event_type,
         "payload": payload,
-        "registered_at": _now(),
+        "timestamp": _now(),
         "status": "REGISTERED"
     }
 
 # ============================================================
-# NOTIFICATION EVENT (PARA ROUTERS)
+# SPECIFIC COMPATIBILITY FUNCTIONS
 # ============================================================
+
+def register_operation_event(payload: dict) -> dict:
+    return register_event("OPERATION_EXECUTED", payload)
+
 
 def register_notification_event(payload: dict) -> dict:
-    return {
-        "event_id": str(uuid.uuid4()),
-        "event_type": "LOGISTICS_ALERT",
-        "payload": payload,
-        "registered_at": _now(),
-        "status": "REGISTERED"
-    }
+    return register_event("NOTIFICATION_SENT", payload)
+
+
+def register_shipment_event(payload: dict) -> dict:
+    return register_event("SHIPMENT_CREATED", payload)
+
+
+def register_document_event(payload: dict) -> dict:
+    return register_event("DOCUMENT_UPLOADED", payload)
