@@ -31,9 +31,24 @@ app = FastAPI(
 # INCLUIR ROUTER PRINCIPAL (EL QUE CONSUME LOS SERVICIOS)
 # ============================================================
 
-# Como tú dijiste: Main levanta App, y App levanta el resto a través del Router
 from app.router import router as api_router
 app.include_router(api_router)
+
+# ============================================================
+# 🔥 INYECCIÓN ENTERPRISE — DATABASE INIT
+# (NO rompe nada existente)
+# ============================================================
+
+try:
+    from infrastructure.database.db_init import init_db
+
+    @app.on_event("startup")
+    async def startup_event():
+        init_db()
+        print("✅ DATABASE CONNECTED")
+
+except Exception as e:
+    print("⚠️ Database init skipped:", str(e))
 
 # ============================================================
 # MOTOR DE LECTURA Y ESCANEO DINÁMICO
@@ -53,28 +68,22 @@ def load_system_modules():
     loaded = []
     errors = []
 
-    # Escaneo profundo para verificar la salud de todos los archivos .py
     for root, dirs, files in os.walk(BASE_DIR):
 
-        # Excluir carpetas que no son código
         dirs[:] = [d for d in dirs if d not in EXCLUDED_FOLDERS]
 
         for file in files:
-            # Solo archivos Python que no sean el main ni inits
             if file.endswith(".py") and not file.startswith("__") and file != "main.py":
 
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, BASE_DIR)
 
-                # Convertir ruta de archivo a nombre de módulo (app.Services.ai.ai_services)
                 module_name = rel_path.replace(os.sep, ".").replace(".py", "")
 
                 try:
-                    # Intenta importar el módulo para ver si tiene errores de sintaxis o rutas
                     importlib.import_module(module_name)
                     loaded.append(module_name)
                 except Exception as e:
-                    # Aquí es donde capturamos el error de "Cannot import name AIServices"
                     errors.append({
                         "module": module_name,
                         "error": str(e)
@@ -102,5 +111,4 @@ def root():
 
 @app.get("/core/boot")
 def boot_system():
-    # Este endpoint activa la lectura que me mostraste en las fotos
     return load_system_modules()
