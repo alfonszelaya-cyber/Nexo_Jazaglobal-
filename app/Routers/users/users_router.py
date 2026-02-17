@@ -1,87 +1,88 @@
 # ============================================================
 # ZYRA / NEXO
-# USERS ROUTER — ENTERPRISE 3.0
-# User Management & Identity Layer
+# USERS SERVICE — ENTERPRISE 3.0
+# Business Logic & Database Persistence
 # ============================================================
 
-from fastapi import APIRouter
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models.user_model import User
+from datetime import datetime
 
-# ============================
-# IMPORT SCHEMAS
-# ============================
+class UsersService:
+    def __init__(self):
+        # El servicio maneja su propia conexión de forma profesional
+        self.db: Session = SessionLocal()
 
-from app.Schemas.users.users_schema import (
-    UserStatusResponse,
-    CreateUserRequest,
-    CreateUserResponse,
-    GetUserRequest,
-    UserResponse,
-    UpdateUserRequest,
-    DeleteUserRequest,
-    UserActionResponse
-)
+    def get_status(self):
+        """Verifica que el servicio de identidad esté online."""
+        return {
+            "service": "IDENTITY_SERVICE",
+            "status": "active",
+            "timestamp": datetime.utcnow()
+        }
 
-# ============================
-# IMPORT SERVICE
-# ============================
+    def create_user(self, data):
+        """
+        Crea un usuario de forma automática desde el payload del router.
+        Recibe el objeto 'data' (CreateUserRequest) completo.
+        """
+        try:
+            # Creamos la instancia del modelo usando los datos del usuario real
+            new_user = User(
+                username=data.username,
+                email=data.email,
+                password=data.password,  # Aquí se guarda la clave
+                roles=data.roles if hasattr(data, 'roles') else "user",
+                is_active=True,
+                created_at=datetime.utcnow()
+            )
 
-from app.Services.users.users_services import UsersService
+            # Persistencia en la base de datos de JAZA
+            self.db.add(new_user)
+            self.db.commit()
+            self.db.refresh(new_user)
 
+            return {
+                "success": True,
+                "message": f"Usuario {new_user.username} creado exitosamente",
+                "user_id": new_user.id
+            }
 
-router = APIRouter(
-    prefix="/users",
-    tags=["Users"]
-)
+        except Exception as e:
+            self.db.rollback()
+            return {
+                "success": False,
+                "message": f"Error al crear usuario: {str(e)}"
+            }
+        finally:
+            self.db.close()
 
-users_service = UsersService()
+    def get_user(self, payload):
+        """Busca un usuario por su ID o Email."""
+        user = self.db.query(User).filter(
+            (User.id == payload.user_id) | (User.email == payload.email)
+        ).first()
+        
+        if not user:
+            return {"error": "Usuario no encontrado"}
+        return user
 
+    def update_user(self, payload):
+        """Actualiza la información de un usuario existente."""
+        user = self.db.query(User).filter(User.id == payload.user_id).first()
+        if user:
+            for key, value in payload.dict(exclude_unset=True).items():
+                setattr(user, key, value)
+            self.db.commit()
+            return {"success": True, "message": "Usuario actualizado"}
+        return {"success": False, "message": "Usuario no encontrado"}
 
-# ============================================================
-# STATUS
-# ============================================================
-
-@router.get("/status", response_model=UserStatusResponse)
-def users_status():
-    return users_service.get_status()
-
-
-# ============================================================
-# CREATE USER
-# ============================================================
-
-@router.post("/create", response_model=CreateUserResponse)
-def create_user(payload: CreateUserRequest):
-    # SOLUCIÓN REAL: Mapeo explícito de campos para evitar TypeErrors en el servicio
-    return users_service.create_user(
-        username=payload.username,
-        email=payload.email,
-        password=payload.password,
-        roles=payload.roles
-    )
-
-
-# ============================================================
-# GET USER
-# ============================================================
-
-@router.post("/get", response_model=UserResponse)
-def get_user(payload: GetUserRequest):
-    return users_service.get_user(payload)
-
-
-# ============================================================
-# UPDATE USER
-# ============================================================
-
-@router.post("/update", response_model=UserActionResponse)
-def update_user(payload: UpdateUserRequest):
-    return users_service.update_user(payload)
-
-
-# ============================================================
-# DELETE USER
-# ============================================================
-
-@router.post("/delete", response_model=UserActionResponse)
-def delete_user(payload: DeleteUserRequest):
-    return users_service.delete_user(payload)
+    def delete_user(self, payload):
+        """Elimina un usuario del sistema."""
+        user = self.db.query(User).filter(User.id == payload.user_id).first()
+        if user:
+            self.db.delete(user)
+            self.db.commit()
+            return {"success": True, "message": "Usuario eliminado"}
+        return {"success": False, "message": "Usuario no encontrado"}
