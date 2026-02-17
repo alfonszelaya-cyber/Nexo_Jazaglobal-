@@ -51,6 +51,7 @@ def users_status():
 
 @router.post("/create", response_model=CreateUserResponse)
 def create_user(payload: CreateUserRequest):
+    # SOLUCIÓN REAL: Mapeo explícito de campos para evitar TypeErrors en el servicio
     return users_service.create_user(
         username=payload.username,
         email=payload.email,
