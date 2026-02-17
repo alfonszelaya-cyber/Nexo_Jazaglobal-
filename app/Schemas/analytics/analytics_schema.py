@@ -88,24 +88,25 @@ class KPIResponse(BaseModel):
 
 
 # ============================================================
-# TREND REQUEST (COMPATIBILIDAD TOTAL CON ROUTER)
+# FORECAST REQUEST (COMPATIBILIDAD CON ROUTER)
 # ============================================================
 
-class TrendRequest(BaseModel):
-    metric_name: str = Field(..., description="Metric to analyze trend")
-    start_date: datetime = Field(..., description="Start date for trend analysis")
-    end_date: datetime = Field(..., description="End date for trend analysis")
+class ForecastRequest(BaseModel):
+    forecast_type: str = Field(..., description="Type of forecast (sales, revenue, growth, etc)")
+    period: str = Field(..., description="Forecast period (monthly, quarterly, yearly)")
     filters: Optional[Dict[str, Any]] = Field(
         default=None,
-        description="Optional filters for trend analysis"
+        description="Optional filters for forecast calculation"
     )
 
 
 # ============================================================
-# TREND RESPONSE (COMPATIBILIDAD TOTAL CON ROUTER)
+# FORECAST RESPONSE (COMPATIBILIDAD CON ROUTER)
 # ============================================================
 
-class TrendResponse(BaseModel):
-    metric_name: str
-    data_points: List[Dict[str, Any]]
+class ForecastResponse(BaseModel):
+    forecast_id: str
+    forecast_type: str
+    period: str
+    predicted_value: float
     generated_at: datetime
