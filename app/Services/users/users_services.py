@@ -13,7 +13,6 @@ from datetime import datetime
 class UsersService:
 
     def __init__(self):
-        # Conexión profesional por instancia
         self.db: Session = SessionLocal()
 
     # ========================================================
@@ -21,10 +20,10 @@ class UsersService:
     # ========================================================
 
     def get_status(self):
-        """Verifica que el servicio de identidad esté online."""
         return {
-            "service": "IDENTITY_SERVICE",
+            "module": "IDENTITY_SERVICE",
             "status": "active",
+            "version": "3.0",
             "timestamp": datetime.utcnow()
         }
 
@@ -33,16 +32,11 @@ class UsersService:
     # ========================================================
 
     def create_user(self, data):
-        """
-        Crea un usuario desde el payload del router.
-        Recibe el objeto CreateUserRequest completo.
-        """
         try:
             new_user = User(
                 username=data.username,
                 email=data.email,
-                password=data.password,
-                roles=data.roles if hasattr(data, "roles") else "user",
+                password_hash=data.password,  # 🔥 CORREGIDO
                 is_active=True,
                 created_at=datetime.utcnow()
             )
@@ -52,17 +46,17 @@ class UsersService:
             self.db.refresh(new_user)
 
             return {
-                "success": True,
-                "message": f"Usuario {new_user.username} creado exitosamente",
-                "user_id": new_user.id
+                "user_id": new_user.id,
+                "username": new_user.username,
+                "email": new_user.email,
+                "roles": data.roles if data.roles else [],
+                "status": "ACTIVE",
+                "created_at": new_user.created_at
             }
 
         except Exception as e:
             self.db.rollback()
-            return {
-                "success": False,
-                "message": f"Error al crear usuario: {str(e)}"
-            }
+            raise e
 
         finally:
             self.db.close()
@@ -72,17 +66,22 @@ class UsersService:
     # ========================================================
 
     def get_user(self, payload):
-        """Busca un usuario por ID o Email."""
         try:
             user = self.db.query(User).filter(
-                (User.id == payload.user_id) |
-                (User.email == payload.email)
+                User.id == payload.user_id
             ).first()
 
             if not user:
-                return {"success": False, "message": "Usuario no encontrado"}
+                return None
 
-            return user
+            return {
+                "user_id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "roles": [],
+                "status": "ACTIVE" if user.is_active else "INACTIVE",
+                "created_at": user.created_at
+            }
 
         finally:
             self.db.close()
@@ -92,23 +91,35 @@ class UsersService:
     # ========================================================
 
     def update_user(self, payload):
-        """Actualiza información de un usuario."""
         try:
             user = self.db.query(User).filter(
                 User.id == payload.user_id
             ).first()
 
             if not user:
-                return {"success": False, "message": "Usuario no encontrado"}
+                return {
+                    "user_id": payload.user_id,
+                    "action": "UPDATE",
+                    "status": "NOT_FOUND",
+                    "executed_at": datetime.utcnow()
+                }
 
-            for key, value in payload.dict(exclude_unset=True).items():
-                setattr(user, key, value)
+            if payload.username:
+                user.username = payload.username
+
+            if payload.email:
+                user.email = payload.email
+
+            if payload.new_status:
+                user.is_active = payload.new_status.upper() == "ACTIVE"
 
             self.db.commit()
 
             return {
-                "success": True,
-                "message": "Usuario actualizado"
+                "user_id": user.id,
+                "action": "UPDATE",
+                "status": "SUCCESS",
+                "executed_at": datetime.utcnow()
             }
 
         finally:
@@ -119,21 +130,27 @@ class UsersService:
     # ========================================================
 
     def delete_user(self, payload):
-        """Elimina un usuario del sistema."""
         try:
             user = self.db.query(User).filter(
                 User.id == payload.user_id
             ).first()
 
             if not user:
-                return {"success": False, "message": "Usuario no encontrado"}
+                return {
+                    "user_id": payload.user_id,
+                    "action": "DELETE",
+                    "status": "NOT_FOUND",
+                    "executed_at": datetime.utcnow()
+                }
 
             self.db.delete(user)
             self.db.commit()
 
             return {
-                "success": True,
-                "message": "Usuario eliminado"
+                "user_id": payload.user_id,
+                "action": "DELETE",
+                "status": "SUCCESS",
+                "executed_at": datetime.utcnow()
             }
 
         finally:
