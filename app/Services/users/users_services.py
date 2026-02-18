@@ -47,4 +47,110 @@ class UsersService:
                 "username": new_user.username,
                 "email": new_user.email,
                 "roles": data.roles if data.roles else [],
-                "status": "ACTIVE
+                "status": "ACTIVE",
+                "created_at": new_user.created_at
+            }
+
+        finally:
+            db.close()
+
+    # ========================================================
+    # GET USER
+    # ========================================================
+
+    def get_user(self, payload):
+        db: Session = SessionLocal()
+
+        try:
+            user = db.query(User).filter(
+                User.id == payload.user_id
+            ).first()
+
+            if not user:
+                return None
+
+            return {
+                "user_id": str(user.id),
+                "username": user.username,
+                "email": user.email,
+                "roles": [],
+                "status": "ACTIVE" if user.is_active else "INACTIVE",
+                "created_at": user.created_at
+            }
+
+        finally:
+            db.close()
+
+    # ========================================================
+    # UPDATE USER
+    # ========================================================
+
+    def update_user(self, payload):
+        db: Session = SessionLocal()
+
+        try:
+            user = db.query(User).filter(
+                User.id == payload.user_id
+            ).first()
+
+            if not user:
+                return {
+                    "user_id": payload.user_id,
+                    "action": "UPDATE",
+                    "status": "NOT_FOUND",
+                    "executed_at": datetime.utcnow()
+                }
+
+            if payload.username:
+                user.username = payload.username
+
+            if payload.email:
+                user.email = payload.email
+
+            if payload.is_active is not None:
+                user.is_active = payload.is_active
+
+            db.commit()
+
+            return {
+                "user_id": str(user.id),
+                "action": "UPDATE",
+                "status": "SUCCESS",
+                "executed_at": datetime.utcnow()
+            }
+
+        finally:
+            db.close()
+
+    # ========================================================
+    # DELETE USER
+    # ========================================================
+
+    def delete_user(self, payload):
+        db: Session = SessionLocal()
+
+        try:
+            user = db.query(User).filter(
+                User.id == payload.user_id
+            ).first()
+
+            if not user:
+                return {
+                    "user_id": payload.user_id,
+                    "action": "DELETE",
+                    "status": "NOT_FOUND",
+                    "executed_at": datetime.utcnow()
+                }
+
+            db.delete(user)
+            db.commit()
+
+            return {
+                "user_id": payload.user_id,
+                "action": "DELETE",
+                "status": "SUCCESS",
+                "executed_at": datetime.utcnow()
+            }
+
+        finally:
+            db.close()
