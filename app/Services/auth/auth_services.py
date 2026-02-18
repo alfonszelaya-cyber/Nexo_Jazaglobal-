@@ -1,36 +1,18 @@
 # ============================================================
 # ZYRA / NEXO
 # AUTH SERVICE — ENTERPRISE 3.0
-# Identity & Access Logic Layer
 # ============================================================
 
 import uuid
 from datetime import datetime, timedelta
 from typing import Dict, Any
 
-# ============================================================
-# CORE / MODULE / INFRA IMPORTS (READY FOR EXPANSION)
-# ============================================================
-
-# Ledger
 from Core.core_ledger import ledger_record
-
-# Event Router
 from infrastructure.events.event_router import route_event
-
-# Payload Validator
 from domain.services.payload_validator import validate_payload
 
 
 class AuthServices:
-    """
-    Enterprise Authentication Services
-
-    - Can emit events to CORE
-    - Can register ledger entries
-    - Can validate payloads
-    - Ready to connect to modules or templates
-    """
 
     TOKEN_EXP_MINUTES = 60
 
@@ -59,19 +41,11 @@ class AuthServices:
             "expires_at": expires_at
         }
 
-        # ------------------------------------------------------
-        # Emit Event to CORE
-        # ------------------------------------------------------
-
         route_event(
             event_type="LOGIN",
             payload=result,
             source="AUTH_SERVICE"
         )
-
-        # ------------------------------------------------------
-        # Register Ledger Entry
-        # ------------------------------------------------------
 
         ledger_record(
             evento="USER_LOGIN",
@@ -86,7 +60,9 @@ class AuthServices:
     # VALIDATE TOKEN
     # ========================================================
 
-    def validate_token(self, token: str) -> Dict[str, Any]:
+    def validate_token(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+
+        token = payload.get("token")
 
         if not token:
             raise ValueError("Invalid token")
@@ -108,7 +84,9 @@ class AuthServices:
     # LOGOUT
     # ========================================================
 
-    def logout(self, email: str) -> Dict[str, Any]:
+    def logout(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+
+        email = payload.get("email")
 
         result = {
             "user": email,
