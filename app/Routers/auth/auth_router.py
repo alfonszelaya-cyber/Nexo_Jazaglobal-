@@ -1,15 +1,10 @@
 # ============================================================
 # ZYRA / NEXO
 # AUTH ROUTER — ENTERPRISE 3.0
-# Authentication & Authorization Layer
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
-
-# ===============================
-# IMPORT SCHEMAS
-# ===============================
 
 from app.Schemas.auth.auth_schema import (
     LoginRequest,
@@ -20,15 +15,8 @@ from app.Schemas.auth.auth_schema import (
     LogoutResponse
 )
 
-# ===============================
-# IMPORT SERVICE
-# ===============================
-
 from app.Services.auth.auth_services import AuthServices
 
-# ===============================
-# ROUTER
-# ===============================
 
 router = APIRouter(
     prefix="/auth",
@@ -37,8 +25,9 @@ router = APIRouter(
 
 auth_service = AuthServices()
 
+
 # ============================================================
-# AUTH STATUS
+# STATUS
 # ============================================================
 
 @router.get("/status")
@@ -49,6 +38,7 @@ def auth_status():
         "version": "3.0.0",
         "timestamp": datetime.utcnow()
     }
+
 
 # ============================================================
 # LOGIN
@@ -62,6 +52,7 @@ def login(payload: LoginRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 # ============================================================
 # VALIDATE TOKEN
 # ============================================================
@@ -73,6 +64,7 @@ def validate_token(payload: TokenValidationRequest):
         return TokenValidationResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 # ============================================================
 # LOGOUT
