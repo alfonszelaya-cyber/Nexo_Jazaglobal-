@@ -1,5 +1,4 @@
 # ============================================================
-# ZYRA / NEXO
 # AUTH SCHEMA — ENTERPRISE 3.0
 # ============================================================
 
@@ -27,23 +26,6 @@ class LoginResponse(BaseModel):
 
 
 # ============================================================
-# REGISTER
-# ============================================================
-
-class RegisterRequest(BaseModel):
-    username: str = Field(..., min_length=3)
-    email: EmailStr
-    password: str = Field(..., min_length=6)
-
-
-class RegisterResponse(BaseModel):
-    user_id: str
-    username: str
-    created_at: datetime
-    status: str
-
-
-# ============================================================
 # TOKEN VALIDATION
 # ============================================================
 
@@ -61,7 +43,7 @@ class TokenValidationResponse(BaseModel):
 # ============================================================
 
 class LogoutRequest(BaseModel):
-    email: EmailStr
+    user: str
 
 
 class LogoutResponse(BaseModel):
