@@ -1,7 +1,7 @@
 # ============================================================
 # ZYRA / NEXO
-# USER MODEL — ENTERPRISE 3.0
-# SQLAlchemy ORM Model
+# USER MODEL — STABLE ENTERPRISE VERSION
+# File: app/models/user_model.py
 # ============================================================
 
 import uuid
@@ -16,15 +16,28 @@ from app.database import Base
 class User(Base):
     """
     Tabla real de usuarios del sistema.
+    Sin roles físicos (roles se manejan lógico por ahora).
+    Compatible con:
+    - UsersService actual
+    - UsersSchema estable
+    - PostgreSQL Render
     """
 
     __tablename__ = "users"
 
+    # ========================================================
+    # PRIMARY KEY
+    # ========================================================
+
     id: Mapped[str] = mapped_column(
-        String,
+        String(36),
         primary_key=True,
         default=lambda: str(uuid.uuid4())
     )
+
+    # ========================================================
+    # BASIC FIELDS
+    # ========================================================
 
     username: Mapped[str] = mapped_column(
         String(100),
