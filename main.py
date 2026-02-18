@@ -20,19 +20,23 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 # ============================================================
-# LIFESPAN (REEMPLAZO PROFESIONAL DE ON_EVENT)
+# DATABASE IMPORTS
 # ============================================================
 
 from app.database import engine, Base
-import app.models.user_model  # NO borrar
+import app.models.user_model  # IMPORTANTE: registra el modelo
+
+# ============================================================
+# LIFESPAN (Startup / Shutdown Profesional)
+# ============================================================
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Esto ocurre al arrancar (Startup)
+    # Startup
     Base.metadata.create_all(bind=engine)
     print("✅ DATABASE CONNECTED & TABLES READY")
     yield
-    # Esto ocurre al cerrar (Shutdown)
+    # Shutdown
     print("✅ SISTEMA CERRADO CORRECTAMENTE")
 
 # ============================================================
@@ -45,7 +49,7 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
-    lifespan=lifespan  # Activamos la conexión de base de datos aquí
+    lifespan=lifespan
 )
 
 # ============================================================
