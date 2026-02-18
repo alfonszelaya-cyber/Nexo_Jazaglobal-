@@ -1,14 +1,9 @@
 # ============================================================
 # ZYRA / NEXO
-# USERS ROUTER — ENTERPRISE 3.0
-# User Management & Identity Layer
+# USERS ROUTER — CLEAN STABLE
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
-
-# ============================
-# IMPORT SCHEMAS
-# ============================
 
 from app.Schemas.users.users_schema import (
     UserStatusResponse,
@@ -20,10 +15,6 @@ from app.Schemas.users.users_schema import (
     DeleteUserRequest,
     UserActionResponse
 )
-
-# ============================
-# IMPORT SERVICE
-# ============================
 
 from app.Services.users.users_services import UsersService
 
@@ -51,17 +42,7 @@ def users_status():
 
 @router.post("/create", response_model=CreateUserResponse)
 def create_user(payload: CreateUserRequest):
-    try:
-        user = users_service.create_user(payload)
-
-        return {
-            "success": True,
-            "message": "Usuario creado correctamente",
-            "user_id": str(user["user_id"])
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return users_service.create_user(payload)
 
 
 # ============================================================
@@ -84,12 +65,7 @@ def get_user(payload: GetUserRequest):
 
 @router.post("/update", response_model=UserActionResponse)
 def update_user(payload: UpdateUserRequest):
-    result = users_service.update_user(payload)
-
-    return {
-        "success": result["status"] == "SUCCESS",
-        "message": result["status"]
-    }
+    return users_service.update_user(payload)
 
 
 # ============================================================
@@ -98,9 +74,4 @@ def update_user(payload: UpdateUserRequest):
 
 @router.post("/delete", response_model=UserActionResponse)
 def delete_user(payload: DeleteUserRequest):
-    result = users_service.delete_user(payload)
-
-    return {
-        "success": result["status"] == "SUCCESS",
-        "message": result["status"]
-    }
+    return users_service.delete_user(payload)
