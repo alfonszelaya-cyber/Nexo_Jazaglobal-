@@ -53,11 +53,16 @@ app = FastAPI(
 )
 
 # ============================================================
-# INCLUIR ROUTER PRINCIPAL
+# INCLUIR ROUTERS
 # ============================================================
 
+# Router principal
 from app.router import router
 app.include_router(router)
+
+# 🔥 NUEVO — AUTH ROUTER INYECTADO
+from app.Routers.auth.auth_router import router as auth_router
+app.include_router(auth_router)
 
 # ============================================================
 # MOTOR DE ESCANEO DINÁMICO
