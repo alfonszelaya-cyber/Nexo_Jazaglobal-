@@ -1,8 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
-# USERS SCHEMA — ENTERPRISE 3.0
-# Identity & User Governance Layer
-# File: app/Schemas/users/users_schema.py
+# USERS SCHEMA — STABLE VERSION
 # ============================================================
 
 from pydantic import BaseModel, EmailStr
