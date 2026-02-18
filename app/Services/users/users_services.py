@@ -12,18 +12,14 @@ from datetime import datetime
 
 class UsersService:
 
-    def __init__(self):
-        self.db: Session = SessionLocal()
-
     # ========================================================
     # STATUS
     # ========================================================
 
     def get_status(self):
         return {
-            "module": "IDENTITY_SERVICE",
+            "service": "IDENTITY_SERVICE",
             "status": "active",
-            "version": "3.0",
             "timestamp": datetime.utcnow()
         }
 
@@ -32,42 +28,47 @@ class UsersService:
     # ========================================================
 
     def create_user(self, data):
+        db: Session = SessionLocal()
+
         try:
             new_user = User(
                 username=data.username,
                 email=data.email,
-                password_hash=data.password,  # 🔥 CORREGIDO
+                password_hash=data.password,
                 is_active=True,
                 created_at=datetime.utcnow()
             )
 
-            self.db.add(new_user)
-            self.db.commit()
-            self.db.refresh(new_user)
+            db.add(new_user)
+            db.commit()
+            db.refresh(new_user)
 
             return {
-                "user_id": new_user.id,
-                "username": new_user.username,
-                "email": new_user.email,
-                "roles": data.roles if data.roles else [],
-                "status": "ACTIVE",
-                "created_at": new_user.created_at
+                "success": True,
+                "message": "Usuario creado correctamente",
+                "user_id": str(new_user.id)
             }
 
         except Exception as e:
-            self.db.rollback()
-            raise e
+            db.rollback()
+            return {
+                "success": False,
+                "message": str(e),
+                "user_id": ""
+            }
 
         finally:
-            self.db.close()
+            db.close()
 
     # ========================================================
     # GET USER
     # ========================================================
 
     def get_user(self, payload):
+        db: Session = SessionLocal()
+
         try:
-            user = self.db.query(User).filter(
+            user = db.query(User).filter(
                 User.id == payload.user_id
             ).first()
 
@@ -75,33 +76,34 @@ class UsersService:
                 return None
 
             return {
-                "user_id": user.id,
+                "id": str(user.id),
                 "username": user.username,
                 "email": user.email,
+                "password": user.password_hash,
                 "roles": [],
-                "status": "ACTIVE" if user.is_active else "INACTIVE",
+                "is_active": user.is_active,
                 "created_at": user.created_at
             }
 
         finally:
-            self.db.close()
+            db.close()
 
     # ========================================================
     # UPDATE USER
     # ========================================================
 
     def update_user(self, payload):
+        db: Session = SessionLocal()
+
         try:
-            user = self.db.query(User).filter(
+            user = db.query(User).filter(
                 User.id == payload.user_id
             ).first()
 
             if not user:
                 return {
-                    "user_id": payload.user_id,
-                    "action": "UPDATE",
-                    "status": "NOT_FOUND",
-                    "executed_at": datetime.utcnow()
+                    "success": False,
+                    "message": "Usuario no encontrado"
                 }
 
             if payload.username:
@@ -110,48 +112,47 @@ class UsersService:
             if payload.email:
                 user.email = payload.email
 
-            if payload.new_status:
-                user.is_active = payload.new_status.upper() == "ACTIVE"
+            if payload.password:
+                user.password_hash = payload.password
 
-            self.db.commit()
+            if payload.is_active is not None:
+                user.is_active = payload.is_active
+
+            db.commit()
 
             return {
-                "user_id": user.id,
-                "action": "UPDATE",
-                "status": "SUCCESS",
-                "executed_at": datetime.utcnow()
+                "success": True,
+                "message": "Usuario actualizado correctamente"
             }
 
         finally:
-            self.db.close()
+            db.close()
 
     # ========================================================
     # DELETE USER
     # ========================================================
 
     def delete_user(self, payload):
+        db: Session = SessionLocal()
+
         try:
-            user = self.db.query(User).filter(
+            user = db.query(User).filter(
                 User.id == payload.user_id
             ).first()
 
             if not user:
                 return {
-                    "user_id": payload.user_id,
-                    "action": "DELETE",
-                    "status": "NOT_FOUND",
-                    "executed_at": datetime.utcnow()
+                    "success": False,
+                    "message": "Usuario no encontrado"
                 }
 
-            self.db.delete(user)
-            self.db.commit()
+            db.delete(user)
+            db.commit()
 
             return {
-                "user_id": payload.user_id,
-                "action": "DELETE",
-                "status": "SUCCESS",
-                "executed_at": datetime.utcnow()
+                "success": True,
+                "message": "Usuario eliminado correctamente"
             }
 
         finally:
-            self.db.close()
+            db.close()
