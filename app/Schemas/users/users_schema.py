@@ -1,6 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
-# USERS SCHEMA — STABLE VERSION
+# USERS SCHEMA — CLEAN STABLE
 # ============================================================
 
 from pydantic import BaseModel, EmailStr
@@ -13,9 +13,8 @@ from datetime import datetime
 # ============================================================
 
 class UserStatusResponse(BaseModel):
-    module: str
+    service: str
     status: str
-    version: str
     timestamp: datetime
 
 
@@ -64,7 +63,7 @@ class UpdateUserRequest(BaseModel):
     user_id: str
     username: Optional[str] = None
     email: Optional[EmailStr] = None
-    new_status: Optional[str] = None
+    is_active: Optional[bool] = None
 
 
 # ============================================================
@@ -76,7 +75,7 @@ class DeleteUserRequest(BaseModel):
 
 
 # ============================================================
-# GENERIC USER ACTION RESPONSE
+# GENERIC ACTION RESPONSE
 # ============================================================
 
 class UserActionResponse(BaseModel):
