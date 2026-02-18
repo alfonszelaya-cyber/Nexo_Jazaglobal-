@@ -4,7 +4,7 @@
 # User Management & Identity Layer
 # ============================================================
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 # ============================
 # IMPORT SCHEMAS
@@ -51,7 +51,17 @@ def users_status():
 
 @router.post("/create", response_model=CreateUserResponse)
 def create_user(payload: CreateUserRequest):
-    return users_service.create_user(payload)
+    try:
+        user = users_service.create_user(payload)
+
+        return {
+            "success": True,
+            "message": "Usuario creado correctamente",
+            "user_id": str(user["user_id"])
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================================
@@ -60,7 +70,12 @@ def create_user(payload: CreateUserRequest):
 
 @router.post("/get", response_model=UserResponse)
 def get_user(payload: GetUserRequest):
-    return users_service.get_user(payload)
+    user = users_service.get_user(payload)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    return user
 
 
 # ============================================================
@@ -69,7 +84,12 @@ def get_user(payload: GetUserRequest):
 
 @router.post("/update", response_model=UserActionResponse)
 def update_user(payload: UpdateUserRequest):
-    return users_service.update_user(payload)
+    result = users_service.update_user(payload)
+
+    return {
+        "success": result["status"] == "SUCCESS",
+        "message": result["status"]
+    }
 
 
 # ============================================================
@@ -78,4 +98,9 @@ def update_user(payload: UpdateUserRequest):
 
 @router.post("/delete", response_model=UserActionResponse)
 def delete_user(payload: DeleteUserRequest):
-    return users_service.delete_user(payload)
+    result = users_service.delete_user(payload)
+
+    return {
+        "success": result["status"] == "SUCCESS",
+        "message": result["status"]
+    }
