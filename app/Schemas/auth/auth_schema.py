@@ -25,7 +25,7 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
     expires_in_minutes: int
     issued_at: datetime
-
+    expires_at: datetime
 
 # ============================================================
 # REGISTER
