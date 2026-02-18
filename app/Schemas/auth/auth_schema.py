@@ -1,8 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
 # AUTH SCHEMA — ENTERPRISE 3.0
-# Authentication & Authorization Contracts
-# File: app/Schemas/auth/auth_schema.py
 # ============================================================
 
 from pydantic import BaseModel, EmailStr, Field
@@ -15,7 +13,7 @@ from datetime import datetime
 # ============================================================
 
 class LoginRequest(BaseModel):
-    username: str = Field(..., min_length=3)
+    email: EmailStr
     password: str = Field(..., min_length=6)
 
 
@@ -26,6 +24,7 @@ class LoginResponse(BaseModel):
     expires_in_minutes: int
     issued_at: datetime
     expires_at: datetime
+
 
 # ============================================================
 # REGISTER
@@ -49,14 +48,12 @@ class RegisterResponse(BaseModel):
 # ============================================================
 
 class TokenValidationRequest(BaseModel):
-    token: str = Field(..., description="JWT or access token to validate")
+    token: str
 
 
 class TokenValidationResponse(BaseModel):
-    valid: bool
-    user: Optional[str] = None
-    roles: Optional[List[str]] = None
-    checked_at: datetime
+    access_granted: bool
+    validated_at: datetime
 
 
 # ============================================================
@@ -64,9 +61,10 @@ class TokenValidationResponse(BaseModel):
 # ============================================================
 
 class LogoutRequest(BaseModel):
-    user: str
+    email: EmailStr
 
 
 class LogoutResponse(BaseModel):
+    user: str
     status: str
     timestamp: datetime
