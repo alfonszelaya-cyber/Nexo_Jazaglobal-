@@ -1,15 +1,10 @@
 # ============================================================
 # ZYRA / NEXO
 # AUTH ROUTER — ENTERPRISE 3.0
-# Authentication & Authorization Layer
 # ============================================================
 
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
-
-# ============================================================
-# IMPORT SCHEMAS
-# ============================================================
 
 from app.Schemas.auth.auth_schema import (
     LoginRequest,
@@ -20,16 +15,8 @@ from app.Schemas.auth.auth_schema import (
     LogoutResponse
 )
 
-# ============================================================
-# IMPORT SERVICE
-# ============================================================
-
 from app.Services.auth.auth_services import AuthServices
 
-
-# ============================================================
-# ROUTER CONFIG
-# ============================================================
 
 router = APIRouter(
     prefix="/auth",
