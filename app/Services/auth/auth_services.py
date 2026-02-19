@@ -21,7 +21,7 @@ class AuthServices:
 
     def login(self, payload: Dict[str, Any]) -> Dict[str, Any]:
 
-        validate_payload(payload)
+        validate_payload(payload, "auth_login")
 
         email = payload.get("email")
         if not email:
