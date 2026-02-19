@@ -1,5 +1,4 @@
 # ============================================================
-# ZYRA / NEXO
 # AUTH SERVICE — ENTERPRISE 3.0
 # ============================================================
 
@@ -60,9 +59,7 @@ class AuthServices:
     # VALIDATE TOKEN
     # ========================================================
 
-    def validate_token(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-
-        token = payload.get("token")
+    def validate_token(self, token: str) -> Dict[str, Any]:
 
         if not token:
             raise ValueError("Invalid token")
@@ -84,9 +81,7 @@ class AuthServices:
     # LOGOUT
     # ========================================================
 
-    def logout(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-
-        email = payload.get("email")
+    def logout(self, email: str) -> Dict[str, Any]:
 
         result = {
             "user": email,
