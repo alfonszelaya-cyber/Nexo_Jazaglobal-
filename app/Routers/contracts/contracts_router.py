@@ -59,7 +59,7 @@ def create_contract(payload: CreateContractRequest):
     try:
         return contracts_service.create_contract(payload)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================================
