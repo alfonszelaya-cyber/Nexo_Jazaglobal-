@@ -1,5 +1,5 @@
 # ============================================================
-# AUTH SERVICE — ENTERPRISE 3.0 (STABLE CLEAN BUILD)
+# AUTH SERVICE — ENTERPRISE 3.0 (FULL ACTIVE)
 # ============================================================
 
 import uuid
@@ -39,19 +39,20 @@ class AuthServices:
             "expires_at": expires_at
         }
 
-        # 🔴 TEMPORALMENTE DESACTIVADO PARA AISLAR ERROR 400
-        # route_event(
-        #     event_type="LOGIN",
-        #     payload=result,
-        #     source="AUTH_SERVICE"
-        # )
+        # EVENT ROUTER ACTIVO
+        route_event(
+            event_type="LOGIN",
+            payload=result,
+            source="AUTH_SERVICE"
+        )
 
-        # ledger_record(
-        #     evento="USER_LOGIN",
-        #     estado="OK",
-        #     payload={"user": email},
-        #     origen="AUTH_SERVICE"
-        # )
+        # LEDGER ACTIVO
+        ledger_record(
+            evento="USER_LOGIN",
+            estado="OK",
+            payload={"user": email},
+            origen="AUTH_SERVICE"
+        )
 
         return result
 
@@ -69,6 +70,12 @@ class AuthServices:
             "validated_at": datetime.utcnow()
         }
 
+        route_event(
+            event_type="TOKEN_VALIDATED",
+            payload=response,
+            source="AUTH_SERVICE"
+        )
+
         return response
 
     # ========================================================
@@ -85,5 +92,18 @@ class AuthServices:
             "status": "session_closed",
             "timestamp": datetime.utcnow()
         }
+
+        route_event(
+            event_type="LOGOUT",
+            payload=result,
+            source="AUTH_SERVICE"
+        )
+
+        ledger_record(
+            evento="USER_LOGOUT",
+            estado="OK",
+            payload={"user": email},
+            origen="AUTH_SERVICE"
+        )
 
         return result
