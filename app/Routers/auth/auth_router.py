@@ -47,7 +47,7 @@ def auth_status():
 @router.post("/login", response_model=LoginResponse)
 def login(payload: LoginRequest):
     try:
-        result = auth_service.login(payload.dict())
+        result = auth_service.login(payload.model_dump())
         return LoginResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
