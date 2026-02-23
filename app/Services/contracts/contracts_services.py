@@ -1,6 +1,6 @@
 # ============================================================
 # ZYRA / NEXO
-# CONTRACTS SERVICE — ENTERPRISE 3.0
+# CONTRACTS SERVICE — ENTERPRISE 3.1 (STABLE FIX)
 # Contract Management Logic Layer
 # ============================================================
 
@@ -8,54 +8,81 @@ import uuid
 from datetime import datetime
 from typing import Dict, Any
 
-# ============================================================
-# CORE / INFRA CONNECTIONS
-# ============================================================
-
 from Core.core_ledger import ledger_record
 from infrastructure.events.event_router import route_event
 
 
 class ContractsService:
-    """
-    Enterprise Contracts Service
-
-    - Creates and terminates contracts
-    - Emits legal events to CORE
-    - Registers immutable ledger records
-    """
 
     # ========================================================
     # CREATE CONTRACT
     # ========================================================
 
-    def create_contract(self, party_a: str, party_b: str, value: float) -> Dict[str, Any]:
+    def create_contract(self, payload: Dict[str, Any]) -> Dict[str, Any]:
 
-        if value <= 0:
-            raise ValueError("Contract value must be greater than zero")
+        client_id = payload.get("client_id")
+        contract_type = payload.get("contract_type")
+        amount = payload.get("amount")
+        currency = payload.get("currency")
+        start_date = payload.get("start_date")
+        end_date = payload.get("end_date")
+
+        if not client_id or not contract_type:
+            raise ValueError("client_id and contract_type required")
+
+        if amount is None or amount <= 0:
+            raise ValueError("Contract amount must be greater than zero")
 
         result = {
-            "contract_id": str(uuid.uuid4()),
-            "party_a": party_a,
-            "party_b": party_b,
-            "value": round(value, 2),
+            "id": uuid.uuid4().hex,
+            "contract_id": uuid.uuid4().hex,
+            "client_id": client_id,
+            "contract_type": contract_type,
+            "amount": round(float(amount), 2),
+            "currency": currency,
+            "start_date": start_date,
+            "end_date": end_date,
             "status": "active",
-            "created_at": datetime.utcnow()
+            "created_at": datetime.utcnow().isoformat()
         }
 
-        # Emit legal event
         route_event(
             event_type="DECISION_ZYRA",
             payload=result,
             source="CONTRACTS_SERVICE"
         )
 
-        # Ledger trace
         ledger_record(
             evento="CONTRACT_CREATED",
             estado="OK",
-            payload=result,
+            payload={"contract_id": result["contract_id"]},
             origen="CONTRACTS_SERVICE"
+        )
+
+        return result
+
+    # ========================================================
+    # ACTIVATE CONTRACT
+    # ========================================================
+
+    def activate_contract(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+
+        contract_id = payload.get("contract_id")
+
+        if not contract_id:
+            raise ValueError("contract_id required")
+
+        result = {
+            "id": contract_id,
+            "contract_id": contract_id,
+            "status": "active",
+            "activated_at": datetime.utcnow().isoformat()
+        }
+
+        route_event(
+            event_type="DECISION_ZYRA",
+            payload=result,
+            source="CONTRACTS_SERVICE"
         )
 
         return result
@@ -64,26 +91,30 @@ class ContractsService:
     # TERMINATE CONTRACT
     # ========================================================
 
-    def terminate_contract(self, contract_id: str) -> Dict[str, Any]:
+    def terminate_contract(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+
+        contract_id = payload.get("contract_id")
+
+        if not contract_id:
+            raise ValueError("contract_id required")
 
         result = {
+            "id": contract_id,
             "contract_id": contract_id,
             "status": "terminated",
-            "terminated_at": datetime.utcnow()
+            "terminated_at": datetime.utcnow().isoformat()
         }
 
-        # Emit legal termination event
         route_event(
             event_type="DECISION_ZYRA",
             payload=result,
             source="CONTRACTS_SERVICE"
         )
 
-        # Ledger trace
         ledger_record(
             evento="CONTRACT_TERMINATED",
             estado="OK",
-            payload=result,
+            payload={"contract_id": contract_id},
             origen="CONTRACTS_SERVICE"
         )
 
