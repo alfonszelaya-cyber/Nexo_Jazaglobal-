@@ -1,5 +1,5 @@
 # ============================================================
-# AUTH SERVICE — ENTERPRISE 3.0 (FULL ACTIVE — STABLE FIX)
+# AUTH SERVICE — ENTERPRISE 3.1 (FULL ACTIVE — JSON SAFE)
 # ============================================================
 
 import uuid
@@ -30,17 +30,21 @@ class AuthServices:
         issued_at = datetime.utcnow()
         expires_at = issued_at + timedelta(minutes=self.TOKEN_EXP_MINUTES)
 
+        # 🔒 FIX REAL: datetime → string ISO (JSON SAFE)
+        issued_at_iso = issued_at.isoformat()
+        expires_at_iso = expires_at.isoformat()
+
         result = {
-            "id": token,  # requerido por event_router para ref_id
+            "id": token,  # requerido por event_router
             "user": email,
             "access_token": token,
             "token_type": "bearer",
             "expires_in_minutes": self.TOKEN_EXP_MINUTES,
-            "issued_at": issued_at,
-            "expires_at": expires_at
+            "issued_at": issued_at_iso,
+            "expires_at": expires_at_iso
         }
 
-        # 🔹 USAMOS EVENTO VÁLIDO DEL CATÁLOGO
+        # 🔹 Evento válido del catálogo
         route_event(
             event_type="ALERTA_ZYRA",
             payload=result,
@@ -65,10 +69,12 @@ class AuthServices:
         if not token:
             raise ValueError("Invalid token")
 
+        validated_at = datetime.utcnow().isoformat()
+
         response = {
             "id": token,
             "access_granted": True,
-            "validated_at": datetime.utcnow()
+            "validated_at": validated_at
         }
 
         route_event(
@@ -88,11 +94,13 @@ class AuthServices:
         if not email:
             raise ValueError("User required")
 
+        timestamp = datetime.utcnow().isoformat()
+
         result = {
             "id": uuid.uuid4().hex,
             "user": email,
             "status": "session_closed",
-            "timestamp": datetime.utcnow()
+            "timestamp": timestamp
         }
 
         route_event(
