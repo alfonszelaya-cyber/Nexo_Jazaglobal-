@@ -3,7 +3,7 @@
 # AUTH ROUTER — ENTERPRISE 3.0
 # ============================================================
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from datetime import datetime
 
 from app.Schemas.auth.auth_schema import (
@@ -46,11 +46,8 @@ def auth_status():
 
 @router.post("/login", response_model=LoginResponse)
 def login(payload: LoginRequest):
-    try:
-        result = auth_service.login(payload.model_dump())
-        return LoginResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    result = auth_service.login(payload.model_dump())
+    return LoginResponse(**result)
 
 
 # ============================================================
@@ -59,11 +56,8 @@ def login(payload: LoginRequest):
 
 @router.post("/validate", response_model=TokenValidationResponse)
 def validate_token(payload: TokenValidationRequest):
-    try:
-        result = auth_service.validate_token(payload.token)
-        return TokenValidationResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    result = auth_service.validate_token(payload.token)
+    return TokenValidationResponse(**result)
 
 
 # ============================================================
@@ -72,8 +66,5 @@ def validate_token(payload: TokenValidationRequest):
 
 @router.post("/logout", response_model=LogoutResponse)
 def logout(payload: LogoutRequest):
-    try:
-        result = auth_service.logout(payload.user)
-        return LogoutResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    result = auth_service.logout(payload.user)
+    return LogoutResponse(**result)
