@@ -6,6 +6,7 @@
 def _fail(msg):
     return False, msg
 
+
 def validate_required(payload: dict, required_fields: list):
     if not isinstance(payload, dict):
         return _fail("Payload inválido: no es dict")
@@ -14,27 +15,32 @@ def validate_required(payload: dict, required_fields: list):
         return _fail(f"Campos faltantes: {missing}")
     return True, "OK"
 
+
 def validate_schema(payload: dict, schema: dict):
     for field, field_type in schema.items():
         if field in payload and not isinstance(payload[field], field_type):
             return _fail(f"Campo '{field}' debe ser {field_type.__name__}")
     return True, "OK"
 
-def validate_payload(payload: dict, required=None, schema=None):
+
+def validate_payload_basic(payload: dict, required=None, schema=None):
+    """
+    Versión básica flexible.
+    """
     if required:
         ok, msg = validate_required(payload, required)
         if not ok:
             return ok, msg
+
     if schema:
         ok, msg = validate_schema(payload, schema)
         if not ok:
             return ok, msg
+
     return True, "VALID"
-    
-    
-    
-    
-    # ============================================================
+
+
+# ============================================================
 # payload_validator.py
 # NEXO / ZYRA — VALIDACIÓN ESTRUCTURAL DE PAYLOADS
 # CORE | CANÓNICO | INMUTABLE
@@ -47,18 +53,21 @@ def validate_payload(payload: dict, required=None, schema=None):
 from Core.zyra_exceptions import ValidationError
 
 
-def validate_payload(payload, schema):
+def validate_payload(payload, schema=None):
     """
     Valida un payload contra un schema canónico.
-
-    payload -> dict
-    schema  -> dict (event_schema, contract_schema, etc)
+    Compatible con llamadas antiguas y nuevas.
     """
 
     if not isinstance(payload, dict):
         raise ValidationError("Payload no es un diccionario")
 
+    # Si no se pasa schema, no rompe
+    if not schema:
+        return True
+
     for field, rules in schema.items():
+
         required = rules.get("required", False)
 
         if required and field not in payload:
@@ -98,4 +107,3 @@ def validate_payload(payload, schema):
 # - Aquí solo se valida forma
 # - Usado por event_router, audit, bus
 # ============================================================
-    
