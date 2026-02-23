@@ -1,79 +1,124 @@
 # ============================================================
-# ZYRA / NEXO
-# AUTH ROUTER — ENTERPRISE 3.0
+# AUTH SERVICE — ENTERPRISE 3.1 (STABLE PROTECTED BUILD)
 # ============================================================
 
-from fastapi import APIRouter, HTTPException
-from datetime import datetime
+import uuid
+from datetime import datetime, timedelta
+from typing import Dict, Any
 
-from app.Schemas.auth.auth_schema import (
-    LoginRequest,
-    LoginResponse,
-    TokenValidationRequest,
-    TokenValidationResponse,
-    LogoutRequest,
-    LogoutResponse
-)
-
-from app.Services.auth.auth_services import AuthServices
+from Core.core_ledger import ledger_record
+from infrastructure.events.event_router import route_event
 
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["Auth"]
-)
+class AuthServices:
 
-auth_service = AuthServices()
+    TOKEN_EXP_MINUTES = 60
 
+    # ========================================================
+    # LOGIN
+    # ========================================================
 
-# ============================================================
-# STATUS
-# ============================================================
+    def login(self, payload: Dict[str, Any]) -> Dict[str, Any]:
 
-@router.get("/status")
-def auth_status():
-    return {
-        "module": "ZYRA_AUTH_ENGINE",
-        "status": "active",
-        "version": "3.0.0",
-        "timestamp": datetime.utcnow()
-    }
+        email = payload.get("email")
+        password = payload.get("password")
 
+        if not email or not password:
+            raise ValueError("Email and password required")
 
-# ============================================================
-# LOGIN
-# ============================================================
+        token = uuid.uuid4().hex
+        issued_at = datetime.utcnow()
+        expires_at = issued_at + timedelta(minutes=self.TOKEN_EXP_MINUTES)
 
-@router.post("/login", response_model=LoginResponse)
-def login(payload: LoginRequest):
-    try:
-        result = auth_service.login(payload.model_dump())
-        return LoginResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        result = {
+            "user": email,
+            "access_token": token,
+            "token_type": "bearer",
+            "expires_in_minutes": self.TOKEN_EXP_MINUTES,
+            "issued_at": issued_at,
+            "expires_at": expires_at
+        }
 
+        # 🔒 PROTECCIÓN: si event_router falla, NO rompe login
+        try:
+            route_event(
+                event_type="LOGIN",
+                payload=result,
+                source="AUTH_SERVICE"
+            )
+        except Exception as e:
+            print("route_event error:", e)
 
-# ============================================================
-# VALIDATE TOKEN
-# ============================================================
+        # 🔒 PROTECCIÓN: si ledger falla, NO rompe login
+        try:
+            ledger_record(
+                evento="USER_LOGIN",
+                estado="OK",
+                payload={"user": email},
+                origen="AUTH_SERVICE"
+            )
+        except Exception as e:
+            print("ledger_record error:", e)
 
-@router.post("/validate", response_model=TokenValidationResponse)
-def validate_token(payload: TokenValidationRequest):
-    try:
-        result = auth_service.validate_token(payload.token)
-        return TokenValidationResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return result
 
+    # ========================================================
+    # VALIDATE TOKEN
+    # ========================================================
 
-# ============================================================
-# LOGOUT
-# ============================================================
+    def validate_token(self, token: str) -> Dict[str, Any]:
 
-@router.post("/logout", response_model=LogoutResponse)
-def logout(payload: LogoutRequest):
-    try:
-        result = auth_service.logout(payload.user)
-        return LogoutResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        if not token:
+            raise ValueError("Invalid token")
+
+        response = {
+            "access_granted": True,
+            "validated_at": datetime.utcnow()
+        }
+
+        try:
+            route_event(
+                event_type="TOKEN_VALIDATED",
+                payload=response,
+                source="AUTH_SERVICE"
+            )
+        except Exception as e:
+            print("route_event error:", e)
+
+        return response
+
+    # ========================================================
+    # LOGOUT
+    # ========================================================
+
+    def logout(self, email: str) -> Dict[str, Any]:
+
+        if not email:
+            raise ValueError("User required")
+
+        result = {
+            "user": email,
+            "status": "session_closed",
+            "timestamp": datetime.utcnow()
+        }
+
+        try:
+            route_event(
+                event_type="LOGOUT",
+                payload=result,
+                source="AUTH_SERVICE"
+            )
+        except Exception as e:
+            print("route_event error:", e)
+
+        try:
+            ledger_record(
+                evento="USER_LOGOUT",
+                estado="OK",
+                payload={"user": email},
+                origen="AUTH_SERVICE"
+            )
+        except Exception as e:
+            print("ledger_record error:", e)
+
+        return result
