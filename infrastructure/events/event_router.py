@@ -22,7 +22,6 @@ LOGS_FILE = os.path.join(DATA_DIR, "logs.json")
 # UTILIDADES DE PERSISTENCIA
 # -----------------------------
 def _now():
-    """Devuelve fecha y hora UTC (ISO 8601)"""
     return datetime.utcnow().isoformat()
 
 def _load(path, default):
@@ -56,16 +55,19 @@ EVENT_CATALOG = {
     "FACTURA_RECIBIDA":   ["FINANZAS", "FISCAL"],
     "DECLARACION_FISCAL": ["FISCAL", "GOBIERNO"],
     "ALERTA_ZYRA":        ["AUDITORIA", "RIESGOS"],
-    "DECISION_ZYRA":      ["AUDITORIA", "CORE"]
+    "DECISION_ZYRA":      ["AUDITORIA", "CORE"],
+
+    # 🔐 AUTH EVENTS (AGREGADO CORRECTAMENTE)
+    "LOGIN":              ["AUDITORIA"],
+    "LOGOUT":             ["AUDITORIA"],
+    "TOKEN_VALIDATED":    ["AUDITORIA"]
 }
 
 # -----------------------------
 # ROUTER PRINCIPAL
 # -----------------------------
 def route_event(event_type, payload, source="SYSTEM"):
-    """
-    Recibe, procesa, audita y distribuye cualquier evento.
-    """
+
     if event_type not in EVENT_CATALOG:
         raise ValueError(f"Evento no permitido en CORE: {event_type}")
 
@@ -128,12 +130,3 @@ def route_event(event_type, payload, source="SYSTEM"):
         "zyra_actions": fired_actions,
         "timestamp": ts
     }
-
-# ============================================================
-# REGLAS
-# - main lo importa
-# - No ejecuta solo
-# - No imprime
-# - No rompe el CORE
-# - Diseñado para 10+ años
-# ============================================================
