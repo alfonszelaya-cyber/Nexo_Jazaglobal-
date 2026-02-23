@@ -21,11 +21,19 @@ class AuthServices:
 
     def login(self, payload: Dict[str, Any]) -> Dict[str, Any]:
 
-        validate_payload(payload, "auth_login")
+        # 🔴 VALIDACIÓN CORRECTA (tu validator espera dict schema)
+        validate_payload(payload, {
+            "email": {
+                "type": "STRING",
+                "required": True
+            },
+            "password": {
+                "type": "STRING",
+                "required": True
+            }
+        })
 
         email = payload.get("email")
-        if not email:
-            raise ValueError("Email is required")
 
         token = uuid.uuid4().hex
         issued_at = datetime.utcnow()
@@ -82,6 +90,9 @@ class AuthServices:
     # ========================================================
 
     def logout(self, email: str) -> Dict[str, Any]:
+
+        if not email:
+            raise ValueError("Email is required")
 
         result = {
             "user": email,
