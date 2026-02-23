@@ -1,5 +1,5 @@
 # ============================================================
-# AUTH SERVICE — ENTERPRISE 3.0
+# AUTH SERVICE — ENTERPRISE 3.0 (STABLE)
 # ============================================================
 
 import uuid
@@ -8,7 +8,6 @@ from typing import Dict, Any
 
 from Core.core_ledger import ledger_record
 from infrastructure.events.event_router import route_event
-from domain.services.payload_validator import validate_payload
 
 
 class AuthServices:
@@ -21,19 +20,11 @@ class AuthServices:
 
     def login(self, payload: Dict[str, Any]) -> Dict[str, Any]:
 
-        # 🔴 VALIDACIÓN CORRECTA (tu validator espera dict schema)
-        validate_payload(payload, {
-            "email": {
-                "type": "STRING",
-                "required": True
-            },
-            "password": {
-                "type": "STRING",
-                "required": True
-            }
-        })
-
         email = payload.get("email")
+        password = payload.get("password")
+
+        if not email or not password:
+            raise ValueError("Email and password required")
 
         token = uuid.uuid4().hex
         issued_at = datetime.utcnow()
@@ -92,7 +83,7 @@ class AuthServices:
     def logout(self, email: str) -> Dict[str, Any]:
 
         if not email:
-            raise ValueError("Email is required")
+            raise ValueError("User required")
 
         result = {
             "user": email,
