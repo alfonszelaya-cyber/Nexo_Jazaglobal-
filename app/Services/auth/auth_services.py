@@ -1,5 +1,5 @@
 # ============================================================
-# AUTH SERVICE — ENTERPRISE 3.0 (FULL ACTIVE)
+# AUTH SERVICE — ENTERPRISE 3.0 (FULL ACTIVE — STABLE FIX)
 # ============================================================
 
 import uuid
@@ -31,6 +31,7 @@ class AuthServices:
         expires_at = issued_at + timedelta(minutes=self.TOKEN_EXP_MINUTES)
 
         result = {
+            "id": token,  # requerido por event_router para ref_id
             "user": email,
             "access_token": token,
             "token_type": "bearer",
@@ -39,14 +40,13 @@ class AuthServices:
             "expires_at": expires_at
         }
 
-        # EVENT ROUTER ACTIVO
+        # 🔹 USAMOS EVENTO VÁLIDO DEL CATÁLOGO
         route_event(
-            event_type="LOGIN",
+            event_type="ALERTA_ZYRA",
             payload=result,
             source="AUTH_SERVICE"
         )
 
-        # LEDGER ACTIVO
         ledger_record(
             evento="USER_LOGIN",
             estado="OK",
@@ -66,12 +66,13 @@ class AuthServices:
             raise ValueError("Invalid token")
 
         response = {
+            "id": token,
             "access_granted": True,
             "validated_at": datetime.utcnow()
         }
 
         route_event(
-            event_type="TOKEN_VALIDATED",
+            event_type="ALERTA_ZYRA",
             payload=response,
             source="AUTH_SERVICE"
         )
@@ -88,13 +89,14 @@ class AuthServices:
             raise ValueError("User required")
 
         result = {
+            "id": uuid.uuid4().hex,
             "user": email,
             "status": "session_closed",
             "timestamp": datetime.utcnow()
         }
 
         route_event(
-            event_type="LOGOUT",
+            event_type="ALERTA_ZYRA",
             payload=result,
             source="AUTH_SERVICE"
         )
